@@ -1,0 +1,28 @@
+global: # Global configuration for Prometheus
+  scrape_interval: 15s # How often to scrape targets by default (every 15 seconds)
+  evaluation_interval: 15s # How often to evaluate Prometheus rules (if any)
+
+scrape_configs: # Configuration for scraping targets (metrics sources)
+  - job_name: "node-exporter" # Job name to identify this group of scrape targets
+    static_configs: # Static list of targets to scrape
+      - targets:
+          # - "<APPICATION_INSTANCE_IP>:9100" # Node Exporter running at this endpoint
+          - "node-exporter:9100" # Node Exporter running at this endpoint
+        labels: # Additional labels to add to these metrics
+          job: node-exporter # Label to identify these metrics as coming from Node Exporter
+
+  - job_name: "cadvisor" # Job name for cAdvisor metrics
+    static_configs: # Static list of targets to scrape
+      - targets:
+          # - "<APPICATION_INSTANCE_IP>:8080" # cAdvisor running at this endpoint
+          - "cadvisor:8080" # cAdvisor running at this endpoint
+        labels: # Additional labels for cAdvisor metrics
+          job: cadvisor # Label to identify metrics from cAdvisor
+
+  - job_name: "promtail" # Job name for Promtail's metrics
+    static_configs: # Static list of targets to scrape
+      - targets:
+          # - "<APPICATION_INSTANCE_IP>:9080" # Promtail metrics available at this endpoint
+          - "promtail:9080" # Promtail metrics available at this endpoint
+        labels: # Additional labels for Promtail metrics
+          job: promtail # Label to identify these as Promtail metrics

@@ -1,0 +1,40 @@
+auth_enabled: false # Disables authentication for Loki's API (suitable for local testing only)
+
+server: # Loki server settings
+  http_listen_port: 3100 # Port where Loki's HTTP API will be exposed
+  grpc_listen_port: 9095 # Port where Loki's gRPC API will be exposed (used for advanced clients)
+
+ingester: # Configurations for Loki's ingestion process
+  lifecycler:
+    ring: # Settings for Loki's distributed ring (single-node mode here)
+      kvstore:
+        store: inmemory # Store Loki's ring information in memory (suitable for local testing)
+      replication_factor: 1 # Number of replicas for logs (1 for non-distributed setups)
+  chunk_idle_period: 5m # Time to wait before writing an idle log chunk to storage
+  chunk_retain_period: 30s # Time to retain a log chunk in memory before flushing to storage
+
+schema_config: # Loki's schema configuration for indexing and storage
+  configs:
+    - from: 2023-01-01 # Start date for this schema configuration
+      store: boltdb-shipper # Storage engine for Loki (optimized for smaller deployments)
+      object_store: filesystem # Store log chunks as files on the filesystem
+      schema: v11 # Schema version used by Loki
+      index: # Index settings for the logs
+        prefix: index_ # Prefix for index files
+        period: 168h # Indexing period (7 days)
+
+storage_config: # Loki's log storage settings
+  boltdb_shipper:
+    active_index_directory: /tmp/loki/boltdb-shipper-active # Directory for active index files
+    cache_location: /tmp/loki/boltdb-shipper-cache # Directory for cache files
+    shared_store: filesystem # Log chunks stored as files in the filesystem
+
+limits_config: # Loki's query and log limits
+  enforce_metric_name: false # Allow logs without associated metric names
+
+chunk_store_config: # Additional configuration for log chunk storage
+  max_look_back_period: 0s # Allow querying logs from all stored data without restriction
+
+table_manager: # Manage retention and deletion of old logs
+  retention_deletes_enabled: true # Enable automatic deletion of old logs
+  retention_period: 168h # Retain logs for 7 days before deletion

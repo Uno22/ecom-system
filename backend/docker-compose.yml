@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: app
+    ports:
+      - '80:80' # Map container's port 80 to host's port 80
+    environment:
+      - NODE_ENV=production
+    # depends_on:
+    #   - database
+    networks:
+      - app_network
+    labels:
+      logging: 'promtail'
+      logging_jobname: 'containerlogs'
+
+  # database:
+  #   image: mysql:8
+  #   container_name: mysql_db
+  #   restart: always
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: root
+  #     MYSQL_DATABASE: nest_db
+  #     MYSQL_USER: nest_user
+  #     MYSQL_PASSWORD: nest_password
+  #   ports:
+  #     - "3306:3306"
+  #   networks:
+  #     - app_network
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql
+
+networks:
+  app_network:
+# volumes:
+#   mysql_data:
