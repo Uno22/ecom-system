@@ -53,4 +53,6 @@ services:
       - app_network
 
 networks:
-  app_network:
+  default:
+    external:
+      name: app_network

@@ -32,7 +32,11 @@ services:
   #   volumes:
   #     - mysql_data:/var/lib/mysql
 
+# networks:
+#   app_network:
 networks:
-  app_network:
+  default:
+    external:
+      name: app_network
 # volumes:
 #   mysql_data:
