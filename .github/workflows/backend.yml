@@ -1,0 +1,28 @@
+name: Deploy to EC2 on release push
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          # Use port 22 by default; override if necessary:
+          port: ${{ secrets.EC2_PORT }}
+          script: |
+            cd ecom-system # Change this to your repo's directory on the EC2 instance
+            git pull origin release
+            cd backend
+            docker compose up -d --build app
