@@ -16,16 +16,15 @@ services:
       - "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)"
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.47.2
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
     container_name: cadvisor
     ports:
       - "8080:8080"
     volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
+      - /var/run/docker.sock:/var/run/docker.sock
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk:/dev/disk:ro
+      - /proc/cpuinfo:/proc/cpuinfo:ro # ✅ Fix CPU vendor ID warning
       - /etc/machine-id:/etc/machine-id:ro
     privileged: true
     devices:
