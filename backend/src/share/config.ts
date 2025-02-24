@@ -19,6 +19,7 @@ export const config = {
       acquire: 30000,
       idle: 60000,
     },
+    autoLoadModels: true,
     logging: console.log,
   } as SequelizeModuleOptions,
   rpc: {

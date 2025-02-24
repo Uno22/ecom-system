@@ -7,7 +7,7 @@ export const ErrValueMustBeAtLeast2Characters = new Error(
   'Value must be at least 2 characters',
 );
 export const ErrDataDuplicated = new Error('Data already exits');
-export const ErrInvalidUUID = new Error('Invalid uuid');
+export const ErrInvalidUUID = new Error('Id should be uuid');
 export const ErrDataNotFound = new Error('Data not found');
 export const ErrDataEmpty = new Error('Data is empty');
 

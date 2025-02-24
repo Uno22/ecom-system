@@ -4,17 +4,16 @@ import { Handler } from 'express';
 
 export interface IService<CreateDTO, UpdateDTO, Entity, Cond> {
   create(data: CreateDTO): Promise<string>;
+  findOne(id: string): Promise<Entity | null>;
+  findAll(cond: Cond, paging: PagingDto): Promise<IListEntity<Entity>>;
   update(id: string, data: UpdateDTO): Promise<boolean>;
-  delete(id: string, isHardDelete: boolean): Promise<boolean>;
-  get(id: string): Promise<Entity | null>;
-  list(cond: Cond, paging: PagingDto): Promise<IListEntity<Entity>>;
+  remove(id: string, isHardDelete: boolean): Promise<boolean>;
 }
 
 export interface ICommandRepository<Entity, UpdateDto> {
-  insert(data: Entity): Promise<boolean>;
+  insert(data: Entity): Promise<Entity | null>;
   update(id: string, data: UpdateDto): Promise<boolean>;
   delete(id: string, isHardDelete: boolean): Promise<boolean>;
-  upsert(data: UpdateDto): Promise<Entity | null>;
 }
 
 export interface IQueryRepository<Entity, Cond> {
