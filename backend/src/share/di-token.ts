@@ -1,0 +1,1 @@
+export const TOKEN_INTROSPECTOR = Symbol('TOKEN_INTROSPECTOR');
