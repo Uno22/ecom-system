@@ -25,9 +25,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { IListEntity } from 'src/share/interface';
 
-@ApiTags('Brand')
+@ApiTags('1. Brand')
 @Controller({ path: 'brands', version: '1' })
 export class BrandController {
   constructor(

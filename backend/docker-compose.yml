@@ -38,7 +38,7 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: 5036c792ec9b4666940f
     ports:
-      - "3306:3306"
+      - '3306:3306'
     networks:
       - app_network
     volumes:
