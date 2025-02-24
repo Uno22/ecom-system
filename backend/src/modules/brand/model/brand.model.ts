@@ -8,6 +8,8 @@ import { ModelStatus } from 'src/share/model/enum';
   updatedAt: 'updated_at',
 })
 export class Brand extends Model<Brand> {
+  declare id: string;
+
   @Column({ type: DataType.STRING, allowNull: false })
   name: string;
 

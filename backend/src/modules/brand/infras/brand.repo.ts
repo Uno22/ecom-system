@@ -82,7 +82,14 @@ export class BrandRepository implements IBrandRepository {
     }
 
     return {
-      data: rawData as Brand[],
+      data: rawData.map((data: any) => {
+        const { created_at, updated_at, ...props } = data;
+        return {
+          ...props,
+          createdAt: created_at,
+          updatedAt: updated_at,
+        } as Brand;
+      }),
       total: count,
     };
   }
