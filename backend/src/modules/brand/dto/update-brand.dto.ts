@@ -1,11 +1,33 @@
-import { ErrNameMustBeAtLeast2Characters } from 'src/share/model/error';
-import { z } from 'zod';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsOptional } from 'class-validator';
 
-export const UpdateBrandDtoSchema = z.object({
-  name: z.string().min(2, ErrNameMustBeAtLeast2Characters).optional(),
-  image: z.string().optional(),
-  description: z.string().optional(),
-  tagLine: z.string().optional(),
-});
+export class UpdateBrandDto {
+  @ApiPropertyOptional({ example: 'Nokia', description: 'The name of brand' })
+  @IsString()
+  @IsOptional()
+  name?: string;
 
-export type UpdateBrandDto = z.infer<typeof UpdateBrandDtoSchema>;
+  @ApiPropertyOptional({
+    example: 'https://image.png',
+    description: 'The url of image',
+  })
+  @IsString()
+  @IsOptional()
+  image?: string;
+
+  @ApiPropertyOptional({
+    example: 'description',
+    description: 'The description of brand',
+  })
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @ApiPropertyOptional({
+    example: 'phone',
+    description: 'The tag line of brand',
+  })
+  @IsString()
+  @IsOptional()
+  tagLine?: string;
+}

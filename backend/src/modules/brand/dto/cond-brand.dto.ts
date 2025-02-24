@@ -1,8 +1,9 @@
-import { ErrNameMustBeAtLeast2Characters } from 'src/share/model/error';
-import { z } from 'zod';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString } from 'class-validator';
 
-export const CondBrandDtoSchema = z.object({
-  name: z.string().min(2, ErrNameMustBeAtLeast2Characters).optional(),
-});
-
-export type CondBrandDto = z.infer<typeof CondBrandDtoSchema>;
+export class CondBrandDto {
+  @ApiPropertyOptional({ example: 'Nokia', description: 'The name of brand' })
+  @IsString()
+  @IsOptional()
+  name?: string;
+}
