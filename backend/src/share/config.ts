@@ -1,6 +1,7 @@
-import dotenv from 'dotenv';
+import { ConfigModule } from '@nestjs/config';
+import { SequelizeModuleOptions } from '@nestjs/sequelize';
 
-dotenv.config();
+ConfigModule.forRoot(); // Load .env file
 
 export const port = process.env.PORT || 3000;
 
@@ -19,7 +20,7 @@ export const config = {
       idle: 60000,
     },
     logging: console.log,
-  },
+  } as SequelizeModuleOptions,
   rpc: {
     productCategoryBaseUrl:
       process.env.RPC_PRODUCT_CATEGORY_BASE_URL || `http://localhost:${port}`,
