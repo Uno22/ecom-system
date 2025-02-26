@@ -1,11 +1,6 @@
-import { ConfigModule } from '@nestjs/config';
-import { SequelizeModuleOptions } from '@nestjs/sequelize';
-
-ConfigModule.forRoot(); // Load .env file
-
 export const port = process.env.PORT || 3000;
 
-export const config = {
+export default () => ({
   mysql: {
     database: process.env.DB_NAME || '',
     username: process.env.DB_USERNAME || '',
@@ -13,15 +8,8 @@ export const config = {
     host: process.env.DB_HOST || '',
     port: parseInt(process.env.DB_PORT as string),
     dialect: 'mysql',
-    pool: {
-      max: 20,
-      min: 2,
-      acquire: 30000,
-      idle: 60000,
-    },
     autoLoadModels: true,
-    logging: console.log,
-  } as SequelizeModuleOptions,
+  },
   rpc: {
     productCategoryBaseUrl:
       process.env.RPC_PRODUCT_CATEGORY_BASE_URL || `http://localhost:${port}`,
@@ -37,4 +25,4 @@ export const config = {
     secretKey: process.env.ACCESS_TOKEN_SECRET_KEY || 'as8f9wfwe',
     expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || '7d',
   },
-};
+});
