@@ -37,7 +37,7 @@ jobs:
           echo "ACCESS_TOKEN_SECRET_KEY=${{ secrets.ACCESS_TOKEN_SECRET_KEY }}" >> .env
           echo "ACCESS_TOKEN_EXPIRES_IN=${{ secrets.ACCESS_TOKEN_EXPIRES_IN }}" >> .env
           echo "copying $GITHUB_WORKSPACE/.env to EC2"
-          scp -o StrictHostKeyChecking=no -i private_key.pem $GITHUB_WORKSPACE/.env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/ecom-system/backend/
+          scp -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_KEY }} $GITHUB_WORKSPACE/.env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/ecom-system/backend/
           echo "completed copy"
           
 
