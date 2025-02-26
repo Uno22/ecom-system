@@ -15,5 +15,6 @@ const dependencies: Provider[] = [
   imports: [SequelizeModule.forFeature([User])],
   controllers: [UserController],
   providers: [...dependencies],
+  exports: [USER_SERVICE],
 })
 export class UserModule {}

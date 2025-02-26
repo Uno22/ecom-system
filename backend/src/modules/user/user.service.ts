@@ -11,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from './model/user.model';
 import { CreationAttributes } from 'sequelize';
 import { omit } from 'lodash';
+import { CondUserDto } from './dto/cond-user.dto';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -66,5 +67,9 @@ export class UserService implements IUserService {
     }
 
     return await this.userRepo.update(id, updateUserDto);
+  }
+
+  async findByCond(cond: CondUserDto, options: object): Promise<User | null> {
+    return await this.userRepo.findByCond(cond, options);
   }
 }

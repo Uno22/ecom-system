@@ -41,10 +41,14 @@ export class UserRepository implements IUserRepository {
     return affectedRows > 0;
   }
 
-  async findByCond(cond: CondUserDto): Promise<User | null> {
+  async findByCond(
+    cond: CondUserDto,
+    options: object = {},
+  ): Promise<User | null> {
     const data = await this.model.findOne({
       where: cond as any,
       raw: true,
+      ...options,
     });
     if (!data) {
       return null;

@@ -28,18 +28,6 @@ export class UserController {
     @Inject(USER_SERVICE) private readonly userService: IUserService,
   ) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiBody({ type: CreateUserDto })
-  @ApiResponse({
-    status: 201,
-    description: 'User successfully created.',
-    type: OmitType(UserDto, ['password']),
-  })
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
-
   @Get(':id')
   @ApiOperation({ summary: 'Get a user by id' })
   @ApiParam({ name: 'id', required: true })
