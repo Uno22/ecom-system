@@ -38,7 +38,7 @@ jobs:
           ls -lah .
           echo "copying $GITHUB_WORKSPACE/.env to EC2"
           echo "scp -i ${{ secrets.EC2_SSH_KEY }} .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}.ap-southeast-1.compute.amazonaws.com:/home/${{ secrets.EC2_USER }}/ecom-system/backend/"
-          scp -i ${{ secrets.EC2_SSH_KEY }} $GITHUB_WORKSPACE/.env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}.ap-southeast-1.compute.amazonaws.com:/home/${{ secrets.EC2_USER }}/ecom-system/backend/
+          scp -i ${{ secrets.EC2_SSH_KEY }} $GITHUB_WORKSPACE/.env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/ecom-system/backend/
           echo "completed copy"
           
 
