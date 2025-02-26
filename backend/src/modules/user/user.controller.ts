@@ -21,6 +21,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/auth.guard';
+import { ParamIdDto } from 'src/share/param.dto';
 
 @ApiTags('User')
 @Controller({ path: 'users', version: '1' })
@@ -34,8 +35,8 @@ export class UserController {
   @ApiOperation({ summary: 'Get a user by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiBearerAuth()
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(id);
+  findOne(@Param() param: ParamIdDto) {
+    return this.userService.findOne(param.id);
   }
 
   @Patch(':id')
@@ -49,7 +50,7 @@ export class UserController {
     description: 'Return true if update successfully.',
     type: Boolean,
   })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  update(@Param() param: ParamIdDto, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(param.id, updateUserDto);
   }
 }

@@ -1,8 +1,7 @@
-import { z } from 'zod';
-import { ErrInvalidUUID } from './model/error';
+import { IsString, IsUUID } from 'class-validator';
 
-export const ParamIdDtoSchema = z.object({
-  id: z.string().uuid(ErrInvalidUUID),
-});
-
-export type ParamIdDto = z.infer<typeof ParamIdDtoSchema>;
+export class ParamIdDto {
+  @IsString()
+  @IsUUID()
+  id: string;
+}
