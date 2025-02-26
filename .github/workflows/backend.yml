@@ -21,6 +21,7 @@ jobs:
           pwd
           ls
           touch .env
+          sudo chmod 666 .env
           echo "debug1"
           ls -lah .
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
@@ -34,7 +35,9 @@ jobs:
           echo "JWT_EXPIRES_IN=${{ secrets.JWT_EXPIRES_IN }}" >> .env
           echo "ACCESS_TOKEN_SECRET_KEY=${{ secrets.ACCESS_TOKEN_SECRET_KEY }}" >> .env
           echo "ACCESS_TOKEN_EXPIRES_IN=${{ secrets.ACCESS_TOKEN_EXPIRES_IN }}" >> .env
+          ls -lah .
           scp -i ${{ secrets.EC2_SSH_KEY }} -r .env {{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}.ap-southeast-1.compute.amazonaws.com:/home/{{ secrets.EC2_USER }}/ecom-system/backend/.env
+          
 
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@master
