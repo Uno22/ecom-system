@@ -33,10 +33,10 @@ services:
     image: bitnami/mysql:8.0
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 8e2a598cf27311ef
+      MYSQL_ROOT_PASSWORD:
       MYSQL_DATABASE: ecom
       MYSQL_USER: user
-      MYSQL_PASSWORD: 5036c792ec9b4666940f
+      MYSQL_PASSWORD:
     ports:
       - '3306:3306'
     networks:
