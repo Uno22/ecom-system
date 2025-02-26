@@ -3,7 +3,7 @@ import { UserRole } from './model/enum';
 import { Handler } from 'express';
 
 export interface IService<CreateDTO, UpdateDTO, Entity, Cond> {
-  create(data: CreateDTO): Promise<string>;
+  create(data: CreateDTO): Promise<Entity | null>;
   findOne(id: string): Promise<Entity | null>;
   findAll(cond: Cond, paging: PagingDto): Promise<IListEntity<Entity>>;
   update(id: string, data: UpdateDTO): Promise<boolean>;
