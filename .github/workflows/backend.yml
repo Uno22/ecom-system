@@ -37,7 +37,7 @@ jobs:
           echo "ACCESS_TOKEN_EXPIRES_IN=${{ secrets.ACCESS_TOKEN_EXPIRES_IN }}" >> .env
           ls -lah .
           echo "copying $GITHUB_WORKSPACE/.env to EC2"
-          scp -i ${{ secrets.EC2_SSH_KEY }} $GITHUB_WORKSPACE/.env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}.ap-southeast-1.compute.amazonaws.com:/home/${{ secrets.EC2_USER }}/ecom-system/backend/
+          scp -i ${{ secrets.EC2_SSH_KEY }} .env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}.ap-southeast-1.compute.amazonaws.com:/home/${{ secrets.EC2_USER }}/ecom-system/backend/
           echo "completed copy"
           
 
