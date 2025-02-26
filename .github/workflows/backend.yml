@@ -16,6 +16,31 @@ jobs:
       - name: Debug EC2_HOST
         run: echo "EC2_HOST is ${{ secrets.EC2_HOST }}"
 
+      - name: Set up SSH Key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
+          chmod 600 private_key.pem 
+      
+      - name: Copy `.env` from GitHub Secrets to EC2
+        run: |
+          touch .env
+          sudo chmod 666 .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "debug2"
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}" >> .env
+          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
+          echo "JWT_EXPIRES_IN=${{ secrets.JWT_EXPIRES_IN }}" >> .env
+          echo "ACCESS_TOKEN_SECRET_KEY=${{ secrets.ACCESS_TOKEN_SECRET_KEY }}" >> .env
+          echo "ACCESS_TOKEN_EXPIRES_IN=${{ secrets.ACCESS_TOKEN_EXPIRES_IN }}" >> .env
+          echo "copying $GITHUB_WORKSPACE/.env to EC2"
+          scp -o StrictHostKeyChecking=no -i private_key.pem $GITHUB_WORKSPACE/.env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/ecom-system/backend/
+          echo "completed copy"
+          
+
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@master
         with:

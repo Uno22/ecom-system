@@ -7,7 +7,7 @@ import { ErrDataDuplicated, ErrDataNotFound } from 'src/share/model/error';
 import { AppError } from 'src/share/app-error';
 import { UserGender, UserRole, UserStatus } from 'src/share/model/enum';
 import { v7 } from 'uuid';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { User } from './model/user.model';
 import { CreationAttributes } from 'sequelize';
 import { omit } from 'lodash';
