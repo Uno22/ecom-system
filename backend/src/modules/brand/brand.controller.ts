@@ -18,6 +18,7 @@ import { ErrInvalidData } from 'src/share/model/error';
 import { ParamIdDto } from 'src/share/param.dto';
 import { BrandDto, BrandListDto, CondBrandDto } from './dto';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -27,6 +28,7 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('1. Brand')
+@ApiBearerAuth()
 @Controller({ path: 'brands', version: '1' })
 export class BrandController {
   constructor(

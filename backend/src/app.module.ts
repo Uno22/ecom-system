@@ -7,6 +7,7 @@ import { BrandModule } from './modules/brand/brand.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SharedModule } from './share/share.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         logging: console.log,
       }),
     }),
+    SharedModule,
     BrandModule,
     UserModule,
     AuthModule,

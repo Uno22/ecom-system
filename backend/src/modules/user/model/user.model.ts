@@ -62,8 +62,6 @@ export class User extends Model<User> {
   }
 
   async comparePassword(plainPassword: string): Promise<boolean> {
-    console.log('plain password', plainPassword);
-    console.log('this.password', this.get('password'));
     return await bcrypt.compare(plainPassword, this.get('password'));
   }
 }
