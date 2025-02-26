@@ -1,0 +1,45 @@
+import { Body, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { IAuthService } from './auth.interface';
+import { User } from '../user/model/user.model';
+import { USER_SERVICE } from '../user/user.di-token';
+import { IUserService } from '../user/user.interface';
+import { CreateUserDto } from '../user/dto/create-user.dto';
+import { UserLoginDto } from './dto/user-login.dto';
+import { LoginReponseDto } from './dto/login-response.dto';
+import { JwtService } from '@nestjs/jwt';
+import { AppError } from 'src/share/app-error';
+import { ErrInvalidEmailAndPassword } from 'src/share/model/error';
+
+@Injectable()
+export class AuthService implements IAuthService {
+  constructor(
+    @Inject(USER_SERVICE) private readonly userService: IUserService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async register(createUserDto: CreateUserDto): Promise<User | null> {
+    return this.userService.create(createUserDto);
+  }
+
+  async login(userLoginDto: UserLoginDto): Promise<LoginReponseDto> {
+    const { email, password } = userLoginDto;
+    const user = await this.userService.findByCond({ email }, { raw: false });
+    if (!user) {
+      throw AppError.from(ErrInvalidEmailAndPassword, HttpStatus.UNAUTHORIZED);
+    }
+
+    const isPasswordMatch = await user.comparePassword(password);
+    if (!isPasswordMatch) {
+      throw AppError.from(ErrInvalidEmailAndPassword, HttpStatus.UNAUTHORIZED);
+    }
+
+    const payload = { email: user.email, sub: user.id };
+    return {
+      accessToken: this.jwtService.sign(payload),
+    };
+  }
+
+  logout(id: string): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+}

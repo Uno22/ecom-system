@@ -1,0 +1,2 @@
+export const BRAND_SERVICE = 'BRAND_SERVICE';
+export const BRAND_REPOSITORY = 'BRAND_REPOSITORY';
