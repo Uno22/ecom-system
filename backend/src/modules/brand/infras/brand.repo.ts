@@ -13,12 +13,11 @@ export class BrandRepository implements IBrandRepository {
   constructor(@InjectModel(Brand) private model: typeof Brand) {}
 
   async insert(data: Brand): Promise<Brand | null> {
-    const newBrand = this.model.create(data);
-    return newBrand;
+    return (await this.model.create(data)).toJSON() as Brand;
   }
 
   async update(id: string, data: UpdateBrandDto): Promise<boolean> {
-    const [affectedRows] = await this.model.update(data as Brand, {
+    const [affectedRows] = await this.model.update(data, {
       where: { id },
     });
     return affectedRows > 0;
@@ -95,12 +94,10 @@ export class BrandRepository implements IBrandRepository {
   }
 
   async findByCond(cond: CondBrandDto): Promise<Brand | null> {
-    console.log('findByCond 1', cond);
     const data = await this.model.findOne({
       where: cond as any,
       raw: true,
     });
-    console.log('findByCond 2', data);
     if (!data) {
       return null;
     }

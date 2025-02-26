@@ -39,8 +39,8 @@ export class BrandController {
   @ApiBody({ type: CreateBrandDto })
   @ApiResponse({
     status: 201,
-    description: 'User successfully created.',
-    type: String,
+    description: 'Brand successfully created.',
+    type: BrandDto,
   })
   create(@Body() createBrandDto: CreateBrandDto) {
     return this.service.create(createBrandDto);

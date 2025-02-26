@@ -25,7 +25,7 @@ export class BrandService implements IBrandService {
     private readonly repository: IBrandRepository,
   ) {}
 
-  async create(data: CreateBrandDto): Promise<string> {
+  async create(data: CreateBrandDto): Promise<Brand | null> {
     const isDataExist = await this.repository.findByCond({
       name: data.name,
     });
@@ -44,15 +44,13 @@ export class BrandService implements IBrandService {
       updatedAt: new Date(),
     };
 
-    await this.repository.insert(newBrand as Brand);
-
-    return newId;
+    return this.repository.insert(newBrand as Brand);
   }
 
   async findOne(id: string): Promise<Brand | null> {
     const data = await this.repository.get(id);
     if (!data || data.status === ModelStatus.DELETED) {
-      throw AppError.from(ErrDataNotFound, 401);
+      throw AppError.from(ErrDataNotFound, 404);
     }
     return data;
   }
@@ -74,13 +72,14 @@ export class BrandService implements IBrandService {
 
     const currentData = await this.repository.get(id);
     if (!currentData || currentData.status === ModelStatus.DELETED) {
-      throw AppError.from(ErrDataNotFound, 401);
+      throw AppError.from(ErrDataNotFound, 404);
     }
 
     return await this.repository.update(id, data);
   }
 
   async remove(id: string, isHardDelete: boolean): Promise<boolean> {
+    // should up products to default brand or prevent delete if there is any product
     return await this.repository.delete(id, isHardDelete);
   }
 }
