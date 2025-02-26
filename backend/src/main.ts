@@ -12,12 +12,12 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   const config = new DocumentBuilder()
-    .setTitle('E-Commercial API')
+    .setTitle('Basic E-Commerce API')
     .setDescription('API for managing users, produce, orders, etc')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document, {
+  SwaggerModule.setup('api-docs', app, document, {
     swaggerOptions: {
       tagsSorter: 'alpha',
     },
