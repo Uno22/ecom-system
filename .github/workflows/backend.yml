@@ -18,6 +18,7 @@ jobs:
       
       - name: Copy `.env` from GitHub Secrets to EC2
         run: |
+          touch .env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
