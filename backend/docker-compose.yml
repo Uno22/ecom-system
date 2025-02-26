@@ -6,6 +6,8 @@ services:
     container_name: app
     ports:
       - '3000:3000' # Map container's port 80 to host's port 80
+    env_file:
+      - .env
     environment:
       - NODE_ENV=production
     # depends_on:
