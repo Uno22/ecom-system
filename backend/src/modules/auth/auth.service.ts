@@ -50,8 +50,14 @@ export class AuthService implements IAuthService {
   }
 
   async validateToken(token: string): Promise<TokenPayload> {
-    const decodedToken = this.jwtService.verify(token);
-    if (!decodedToken) {
+    let decodedToken;
+    try {
+      const decodedToken = this.jwtService.verify(token);
+      if (!decodedToken) {
+        throw new InvalidTokenException();
+      }
+    } catch (error) {
+      console.error('[ERROR] ********** jwt verify token error:', error);
       throw new InvalidTokenException();
     }
 

@@ -11,7 +11,6 @@ import { ApiException } from '../exceptions';
 @Catch(HttpException)
 export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
-    console.log('catch');
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus
@@ -19,12 +18,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       : HttpStatus.INTERNAL_SERVER_ERROR;
 
     let responseBody = exception.getResponse();
-    console.log(
-      'responseBody',
-      responseBody,
-      exception instanceof ApiException,
-      typeof exception,
-    );
+    console.error('[ERROR] ********** exception responseBody:', responseBody);
 
     const responseBodyAsAny = responseBody as any;
     if (Array.isArray(responseBodyAsAny.message)) {
