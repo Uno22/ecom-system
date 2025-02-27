@@ -20,8 +20,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthGuard } from '../auth/auth.guard';
 import { ParamIdDto } from 'src/share/dto/param.dto';
+import { AuthGuard } from 'src/share/guards';
 
 @ApiTags('User')
 @Controller({ path: 'users', version: '1' })

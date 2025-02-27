@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IUserRepository, IUserService } from './user.interface';
 import { USER_REPOSITORY } from './user.di-token';
-import { ErrDataDuplicated, ErrDataNotFound } from 'src/share/model/error';
+import { ErrDataDuplicated, ErrDataNotFound } from 'src/share/utils/error';
 import { AppError } from 'src/share/app-error';
 import { UserGender, UserRole, UserStatus } from 'src/share/constants/enum';
 import { v7 } from 'uuid';
@@ -12,6 +12,10 @@ import { User } from './model/user.model';
 import { CreationAttributes } from 'sequelize';
 import { omit } from 'lodash';
 import { CondUserDto } from './dto/cond-user.dto';
+import {
+  DataDuplicatedException,
+  DataNotFoundException,
+} from 'src/share/exceptions';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -28,7 +32,7 @@ export class UserService implements IUserService {
     });
 
     if (isDataExist) {
-      throw AppError.from(ErrDataDuplicated, 401);
+      throw new DataDuplicatedException();
     }
 
     const salt = bcrypt.genSaltSync(10);
@@ -48,14 +52,14 @@ export class UserService implements IUserService {
     const createdUser = await this.userRepo.insert(
       newUser as CreationAttributes<User>,
     );
-    console.log('createdUser', createdUser);
+
     return omit(createdUser, ['password']);
   }
 
   async findOne(id: string) {
     const data = await this.userRepo.get(id);
     if (!data || data.status === UserStatus.DELETED) {
-      throw AppError.from(ErrDataNotFound, 404);
+      throw new DataNotFoundException();
     }
     return data;
   }
@@ -63,7 +67,7 @@ export class UserService implements IUserService {
   async update(id: string, updateUserDto: UpdateUserDto) {
     const currentData = await this.userRepo.get(id);
     if (!currentData || currentData.status === UserStatus.DELETED) {
-      throw AppError.from(ErrDataNotFound, 404);
+      throw new DataNotFoundException();
     }
 
     return await this.userRepo.update(id, updateUserDto);

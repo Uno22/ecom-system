@@ -13,21 +13,23 @@ import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import { BRAND_SERVICE } from './brand.di-token';
 import { IBrandService } from './brand.interface';
-import { AppError } from 'src/share/app-error';
-import { ErrInvalidData } from 'src/share/model/error';
 import { ParamIdDto } from 'src/share/dto/param.dto';
 import { BrandDto, BrandListDto, CondBrandDto } from './dto';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiExtraModels,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { InvalidQueryDataException } from 'src/share/exceptions';
+import { ApiResponseDto } from 'src/share/dto';
 
 @ApiTags('1. Brand')
+@ApiExtraModels(ApiResponseDto, BrandListDto, BrandDto)
 @ApiBearerAuth()
 @Controller({ path: 'brands', version: '1' })
 export class BrandController {
@@ -70,7 +72,7 @@ export class BrandController {
       paging.page < 1 ||
       paging.limit < 1
     ) {
-      throw AppError.from(ErrInvalidData, 401);
+      throw new InvalidQueryDataException();
     }
 
     const cond: CondBrandDto = name ? { name } : {};

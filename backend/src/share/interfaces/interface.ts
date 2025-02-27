@@ -1,4 +1,4 @@
-import { PagingDto } from 'src/share/dto/paging';
+import { PagingDto } from 'src/share/dto/paging.dto';
 import { UserRole } from '../constants/enum';
 import { Handler } from 'express';
 

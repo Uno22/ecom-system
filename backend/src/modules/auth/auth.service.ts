@@ -8,7 +8,8 @@ import { UserLoginDto } from './dto/user-login.dto';
 import { LoginReponseDto } from './dto/login-response.dto';
 import { JwtService } from '@nestjs/jwt';
 import { AppError } from 'src/share/app-error';
-import { ErrInvalidEmailAndPassword } from 'src/share/model/error';
+import { ErrInvalidEmailAndPassword } from 'src/share/utils/error';
+import { InvalidEmaipAndPasswordException } from 'src/share/exceptions';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -25,12 +26,12 @@ export class AuthService implements IAuthService {
     const { email, password } = userLoginDto;
     const user = await this.userService.findByCond({ email }, { raw: false });
     if (!user) {
-      throw AppError.from(ErrInvalidEmailAndPassword, HttpStatus.UNAUTHORIZED);
+      throw new InvalidEmaipAndPasswordException();
     }
 
     const isPasswordMatch = await user.comparePassword(password);
     if (!isPasswordMatch) {
-      throw AppError.from(ErrInvalidEmailAndPassword, HttpStatus.UNAUTHORIZED);
+      throw new InvalidEmaipAndPasswordException();
     }
 
     const payload = { email: user.email, sub: user.id };

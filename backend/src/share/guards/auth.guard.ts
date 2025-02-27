@@ -3,11 +3,14 @@ import {
   ExecutionContext,
   Inject,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { IUserService } from '../user/user.interface';
-import { USER_SERVICE } from '../user/user.di-token';
+import { USER_SERVICE } from 'src/modules/user/user.di-token';
+import { IUserService } from 'src/modules/user/user.interface';
+import {
+  InvalidTokenException,
+  UserTokenNotFoundException,
+} from '../exceptions';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -21,21 +24,20 @@ export class AuthGuard implements CanActivate {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
 
     if (type !== 'Bearer' || !token) {
-      throw new UnauthorizedException();
+      throw new InvalidTokenException();
     }
 
     const decodedToken = this.jwtService.verify(token);
     if (!decodedToken) {
-      throw new UnauthorizedException();
+      throw new InvalidTokenException();
     }
 
     const user = await this.userService.findOne(decodedToken.sub);
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UserTokenNotFoundException();
     }
 
     request.user = user;
     return true;
-    //return Promise.resolve(true);
   }
 }
