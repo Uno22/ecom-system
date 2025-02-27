@@ -7,42 +7,32 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ErrTokenInvalid } from '../app-error';
-import { ITokenIntrospect } from '../interfaces';
-import { TOKEN_INTROSPECTOR } from '../constants/di-token';
+import { ITokenIntrospect, IValidateTokenRpc } from '../interfaces';
+import { TOKEN_INTROSPECTOR, VALIDATE_TOKEN_RPC } from '../constants/di-token';
+import { InvalidTokenException } from '../exceptions';
 
 @Injectable()
 export class RemoteAuthGuard implements CanActivate {
   constructor(
-    @Inject(TOKEN_INTROSPECTOR) private readonly introspector: ITokenIntrospect,
+    //@Inject(TOKEN_INTROSPECTOR) private readonly introspector: ITokenIntrospect,
+    @Inject(VALIDATE_TOKEN_RPC)
+    private readonly validateTokenRpc: IValidateTokenRpc,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = extractTokenFromHeader(request);
-    if (!token) {
-      throw new UnauthorizedException();
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+
+    if (type !== 'Bearer' || !token) {
+      throw new InvalidTokenException();
     }
 
-    try {
-      const { payload, error, isOk } =
-        await this.introspector.introspect(token);
-
-      if (!isOk) {
-        throw ErrTokenInvalid.withLog('Token parse failed').withLog(
-          error!.message,
-        );
-      }
-
-      request['requester'] = payload;
-    } catch {
-      throw new UnauthorizedException();
+    const data = await this.validateTokenRpc.validateToken(token);
+    if (!data) {
+      throw new InvalidTokenException();
     }
 
+    request.user = data;
     return true;
   }
-}
-
-function extractTokenFromHeader(request: Request): string | undefined {
-  const [type, token] = request.headers.authorization?.split(' ') ?? [];
-  return type === 'Bearer' ? token : undefined;
 }

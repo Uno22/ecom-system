@@ -5,6 +5,7 @@ import { BrandRepository } from './infras/brand.repo';
 import { BRAND_SERVICE, BRAND_REPOSITORY } from './brand.di-token';
 import { Brand } from './model/brand.model';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { SharedModule } from 'src/share/share.module';
 
 const dependencies: Provider[] = [
   { provide: BRAND_SERVICE, useClass: BrandService },
@@ -12,7 +13,7 @@ const dependencies: Provider[] = [
 ];
 
 @Module({
-  imports: [SequelizeModule.forFeature([Brand])],
+  imports: [SequelizeModule.forFeature([Brand]), SharedModule],
   controllers: [BrandController],
   providers: [...dependencies],
 })

@@ -37,7 +37,7 @@ export class AuthGuard implements CanActivate {
       throw new UserTokenNotFoundException();
     }
 
-    request.user = user;
+    request.user = { sub: user.id, role: user.role };
     return true;
   }
 }

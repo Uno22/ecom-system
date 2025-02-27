@@ -1,14 +1,12 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
   Inject,
   UseGuards,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { USER_SERVICE } from './user.di-token';
 import { IUserService } from './user.interface';
@@ -23,15 +21,16 @@ import {
 import { ParamIdDto } from 'src/share/dto/param.dto';
 import { AuthGuard } from 'src/share/guards';
 
-@ApiTags('User')
 @Controller({ path: 'users', version: '1' })
+@UseGuards(AuthGuard)
+@ApiTags('User')
+@ApiBearerAuth()
 export class UserController {
   constructor(
     @Inject(USER_SERVICE) private readonly userService: IUserService,
   ) {}
 
   @Get(':id')
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Get a user by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiBearerAuth()
@@ -40,7 +39,6 @@ export class UserController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Update a user by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiBearerAuth()

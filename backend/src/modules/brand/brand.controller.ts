@@ -8,6 +8,7 @@ import {
   Delete,
   Inject,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
@@ -26,12 +27,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { InvalidQueryDataException } from 'src/share/exceptions';
-import { ApiResponseDto } from 'src/share/dto';
+import { RemoteAuthGuard } from 'src/share/guards';
 
-@ApiTags('1. Brand')
-@ApiExtraModels(ApiResponseDto, BrandListDto, BrandDto)
-@ApiBearerAuth()
 @Controller({ path: 'brands', version: '1' })
+@UseGuards(RemoteAuthGuard)
+@ApiTags('1. Brand')
+@ApiBearerAuth()
 export class BrandController {
   constructor(
     @Inject(BRAND_SERVICE)
@@ -76,7 +77,7 @@ export class BrandController {
     }
 
     const cond: CondBrandDto = name ? { name } : {};
-
+    console.log('req', req.user);
     return this.service.findAll(cond, paging);
   }
 

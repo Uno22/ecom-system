@@ -11,6 +11,7 @@ export default () => ({
     autoLoadModels: true,
   },
   rpc: {
+    authBaseUrl: process.env.RPC_AUTH_BASE_URL || `http://localhost:${port}`,
     productCategoryBaseUrl:
       process.env.RPC_PRODUCT_CATEGORY_BASE_URL || `http://localhost:${port}`,
     productBrandBaseUrl:
