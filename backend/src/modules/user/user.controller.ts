@@ -21,7 +21,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/auth.guard';
-import { ParamIdDto } from 'src/share/param.dto';
+import { ParamIdDto } from 'src/share/dto/param.dto';
 
 @ApiTags('User')
 @Controller({ path: 'users', version: '1' })

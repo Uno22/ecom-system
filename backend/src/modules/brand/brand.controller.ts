@@ -15,7 +15,7 @@ import { BRAND_SERVICE } from './brand.di-token';
 import { IBrandService } from './brand.interface';
 import { AppError } from 'src/share/app-error';
 import { ErrInvalidData } from 'src/share/model/error';
-import { ParamIdDto } from 'src/share/param.dto';
+import { ParamIdDto } from 'src/share/dto/param.dto';
 import { BrandDto, BrandListDto, CondBrandDto } from './dto';
 import {
   ApiBearerAuth,
