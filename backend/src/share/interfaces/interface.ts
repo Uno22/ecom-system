@@ -1,6 +1,7 @@
 import { PagingDto } from 'src/share/dto/paging.dto';
 import { UserRole } from '../constants/enum';
 import { Handler } from 'express';
+import { ApiResponseDto } from '../dto';
 
 export interface IService<CreateDTO, UpdateDTO, Entity, Cond> {
   create(data: CreateDTO): Promise<Entity | null>;
@@ -67,12 +68,3 @@ export type ServiceContext = {
 };
 
 export type UID = string;
-
-export interface IValidateTokenRPC {
-  validateToken(token: string): Promise<TokenPayload | null>;
-}
-
-export type ValidateTokenResult = {
-  payload: TokenPayload | null;
-  error?: Error;
-};

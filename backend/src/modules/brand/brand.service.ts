@@ -4,7 +4,7 @@ import { UpdateBrandDto } from './dto/update-brand.dto';
 import { Brand } from './model/brand.model';
 import { BRAND_REPOSITORY } from './brand.di-token';
 import { IBrandRepository, IBrandService } from './brand.interface';
-import { IListEntity } from 'src/share/interfaces/interface';
+import { IListEntity } from 'src/share/interfaces';
 import { PagingDto } from 'src/share/dto/paging.dto';
 import { CondBrandDto } from './dto';
 import { AppError } from 'src/share/app-error';

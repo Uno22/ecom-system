@@ -3,7 +3,7 @@ import { Brand } from '../model/brand.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { IBrandRepository } from '../brand.interface';
 import { CondBrandDto, UpdateBrandDto } from '../dto';
-import { IListEntity } from 'src/share/interfaces/interface';
+import { IListEntity } from 'src/share/interfaces';
 import { PagingDto } from 'src/share/dto/paging.dto';
 import { ModelStatus } from 'src/share/constants/enum';
 import { Op } from 'sequelize';

@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ErrTokenInvalid } from '../app-error';
-import { ITokenIntrospect } from '../interfaces/interface';
-import { TOKEN_INTROSPECTOR } from '../di-token';
+import { ITokenIntrospect } from '../interfaces';
+import { TOKEN_INTROSPECTOR } from '../constants/di-token';
 
 @Injectable()
 export class RemoteAuthGuard implements CanActivate {

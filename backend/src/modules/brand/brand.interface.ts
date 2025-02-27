@@ -1,4 +1,4 @@
-import { IListEntity, IRepository } from 'src/share/interfaces/interface';
+import { IListEntity, IRepository } from 'src/share/interfaces';
 import { CreateBrandDto, UpdateBrandDto, CondBrandDto } from './dto';
 import { Brand } from './model/brand.model';
 import { PagingDto } from 'src/share/dto';
