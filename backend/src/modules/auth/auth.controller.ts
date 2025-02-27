@@ -7,7 +7,6 @@ import {
   OmitType,
 } from '@nestjs/swagger';
 import { AUTH_SERVICE } from './auth.di-token';
-import { AuthService } from './auth.service';
 import { IAuthService } from './auth.interface';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserDto } from '../../share/dto/user.dto';

@@ -3,18 +3,14 @@ import {
   ExecutionContext,
   Inject,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
-import { Request } from 'express';
-import { ErrTokenInvalid } from '../app-error';
-import { ITokenIntrospect, IValidateTokenRpc } from '../interfaces';
-import { TOKEN_INTROSPECTOR, VALIDATE_TOKEN_RPC } from '../constants/di-token';
+import { IValidateTokenRpc } from '../interfaces';
+import { VALIDATE_TOKEN_RPC } from '../constants/di-token';
 import { InvalidTokenException } from '../exceptions';
 
 @Injectable()
 export class RemoteAuthGuard implements CanActivate {
   constructor(
-    //@Inject(TOKEN_INTROSPECTOR) private readonly introspector: ITokenIntrospect,
     @Inject(VALIDATE_TOKEN_RPC)
     private readonly validateTokenRpc: IValidateTokenRpc,
   ) {}

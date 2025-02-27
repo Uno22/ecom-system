@@ -1,4 +1,3 @@
-import { HttpException } from '@nestjs/common';
 import { IValidateTokenRpc, TokenPayload } from '../interfaces';
 import axios from 'axios';
 

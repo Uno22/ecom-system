@@ -1,5 +1,3 @@
-import { ErrDataEmpty } from './error';
-import { AppError } from '../app-error';
 import { DataEmptyException } from '../exceptions';
 
 export const validateDataObjectEmpty = (object: any) => {

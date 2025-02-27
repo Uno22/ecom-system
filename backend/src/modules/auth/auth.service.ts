@@ -13,11 +13,7 @@ import {
   UserNotFoundException,
 } from 'src/share/exceptions';
 import { UserInactivatedException } from 'src/share/exceptions/user-inactivated.exception';
-import {
-  UserInactivatedStatus,
-  UserRole,
-  UserStatus,
-} from 'src/share/constants/enum';
+import { UserInactivatedStatus, UserRole } from 'src/share/constants/enum';
 import { TokenPayload } from 'src/share/interfaces';
 
 @Injectable()

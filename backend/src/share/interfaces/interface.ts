@@ -1,7 +1,6 @@
 import { PagingDto } from 'src/share/dto/paging.dto';
 import { UserRole } from '../constants/enum';
 import { Handler } from 'express';
-import { ApiResponseDto } from '../dto';
 
 export interface IService<CreateDTO, UpdateDTO, Entity, Cond> {
   create(data: CreateDTO): Promise<Entity | null>;
@@ -46,16 +45,6 @@ export interface Requester extends TokenPayload {}
 export interface ITokenProvider {
   generateToken(payload: TokenPayload): Promise<string>;
   verifyToken(token: string): Promise<TokenPayload | null>;
-}
-
-export type TokenIntrospectResult = {
-  payload: TokenPayload | null;
-  error?: Error;
-  isOk: boolean;
-};
-
-export interface ITokenIntrospect {
-  introspect(token: string): Promise<TokenIntrospectResult>;
 }
 
 export interface Mdlfactor {

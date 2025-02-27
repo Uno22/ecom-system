@@ -7,9 +7,7 @@ import { IBrandRepository, IBrandService } from './brand.interface';
 import { IListEntity } from 'src/share/interfaces';
 import { PagingDto } from 'src/share/dto/paging.dto';
 import { CondBrandDto } from './dto';
-import { AppError } from 'src/share/app-error';
 import { ModelStatus } from 'src/share/constants/enum';
-import { ErrDataDuplicated, ErrDataNotFound } from 'src/share/utils/error';
 import { v7 } from 'uuid';
 import { CreationAttributes, Op } from 'sequelize';
 import { validateDataObjectEmpty } from 'src/share/utils/validate';
@@ -17,7 +15,6 @@ import {
   DataDuplicatedException,
   DataNotFoundException,
 } from 'src/share/exceptions';
-import { ApiResponseDto } from 'src/share/dto';
 
 @Injectable()
 export class BrandService implements IBrandService {
