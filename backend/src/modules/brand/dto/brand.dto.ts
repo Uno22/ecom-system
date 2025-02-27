@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CreateBrandDto } from './create-brand.dto';
-import { ModelStatus } from 'src/share/model/enum';
+import { ModelStatus } from 'src/share/constants/enum';
 import { IsEnum, IsUUID } from 'class-validator';
 
 export class BrandDto extends CreateBrandDto {

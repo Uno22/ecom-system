@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ErrTokenInvalid } from '../app-error';
-import { ITokenIntrospect } from '../interface';
+import { ITokenIntrospect } from '../interfaces/interface';
 import { TOKEN_INTROSPECTOR } from '../di-token';
 
 @Injectable()

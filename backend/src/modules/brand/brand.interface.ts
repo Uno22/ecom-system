@@ -1,4 +1,4 @@
-import { IRepository, IService } from 'src/share/interface';
+import { IRepository, IService } from 'src/share/interfaces/interface';
 import { CreateBrandDto, UpdateBrandDto, CondBrandDto } from './dto';
 import { Brand } from './model/brand.model';
 

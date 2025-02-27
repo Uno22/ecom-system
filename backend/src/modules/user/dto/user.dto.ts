@@ -10,7 +10,7 @@ import {
   IsUUID,
   MinLength,
 } from 'class-validator';
-import { UserGender, UserRole, UserStatus } from 'src/share/model/enum';
+import { UserGender, UserRole, UserStatus } from 'src/share/constants/enum';
 
 export class UserDto {
   @ApiProperty({

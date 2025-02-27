@@ -1,5 +1,5 @@
 import { validate } from 'uuid';
-import { ErrDataEmpty, ErrInvalidUUID } from './error';
+import { ErrDataEmpty, ErrInvalidUUID } from '../model/error';
 import { AppError } from '../app-error';
 
 export const isValidUUID = (id: string) => {

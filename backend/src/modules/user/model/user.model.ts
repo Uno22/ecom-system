@@ -1,5 +1,5 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
-import { UserGender, UserRole, UserStatus } from 'src/share/model/enum';
+import { UserGender, UserRole, UserStatus } from 'src/share/constants/enum';
 import * as bcrypt from 'bcryptjs';
 
 @Table({

@@ -4,19 +4,18 @@ import { UpdateBrandDto } from './dto/update-brand.dto';
 import { Brand } from './model/brand.model';
 import { BRAND_REPOSITORY } from './brand.di-token';
 import { IBrandRepository, IBrandService } from './brand.interface';
-import { InjectModel } from '@nestjs/sequelize';
-import { IListEntity } from 'src/share/interface';
-import { PagingDto } from 'src/share/model/paging';
+import { IListEntity } from 'src/share/interfaces/interface';
+import { PagingDto } from 'src/share/dto/paging';
 import { CondBrandDto } from './dto';
 import { AppError } from 'src/share/app-error';
-import { ModelStatus } from 'src/share/model/enum';
+import { ModelStatus } from 'src/share/constants/enum';
 import { ErrDataDuplicated, ErrDataNotFound } from 'src/share/model/error';
 import { v7 } from 'uuid';
 import { Op } from 'sequelize';
 import {
   validateUUID,
   validateDataObjectEmpty,
-} from 'src/share/model/validate';
+} from 'src/share/utils/validate';
 
 @Injectable()
 export class BrandService implements IBrandService {

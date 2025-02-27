@@ -1,5 +1,5 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
-import { ModelStatus } from 'src/share/model/enum';
+import { ModelStatus } from 'src/share/constants/enum';
 
 @Table({
   tableName: 'brands',

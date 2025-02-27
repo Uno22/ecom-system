@@ -5,7 +5,7 @@ import { IUserRepository, IUserService } from './user.interface';
 import { USER_REPOSITORY } from './user.di-token';
 import { ErrDataDuplicated, ErrDataNotFound } from 'src/share/model/error';
 import { AppError } from 'src/share/app-error';
-import { UserGender, UserRole, UserStatus } from 'src/share/model/enum';
+import { UserGender, UserRole, UserStatus } from 'src/share/constants/enum';
 import { v7 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 import { User } from './model/user.model';
