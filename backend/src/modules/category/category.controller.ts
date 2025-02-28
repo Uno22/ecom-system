@@ -129,6 +129,6 @@ export class CategoryController {
   })
   remove(@Param() param: ParamIdDto, @Req() req) {
     const { hard = 'false' } = req.query;
-    return this.categoryService.remove(param.id, hard);
+    return this.categoryService.remove(param.id, hard === 'true');
   }
 }
