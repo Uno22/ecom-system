@@ -8,6 +8,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SharedModule } from './share/share.module';
+import { CategoryModule } from './modules/category/category.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { SharedModule } from './share/share.module';
     BrandModule,
     UserModule,
     AuthModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
