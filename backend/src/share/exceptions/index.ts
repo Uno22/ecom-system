@@ -7,3 +7,5 @@ export * from './data-not-found.exception';
 export * from './data-empty.exception';
 export * from './user-not-found.exception';
 export * from './user-token-not-found.exception';
+export * from './user-forbidden.exception';
+export * from './user-unauthorized.exception';

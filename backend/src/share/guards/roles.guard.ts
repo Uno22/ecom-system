@@ -1,17 +1,20 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Requester } from '../interfaces';
 import { ROLES_KEY } from './roles.decorator';
 import { UserRole } from '../constants/enum';
+import {
+  UserForbiddenException,
+  UserUnauthorizedException,
+} from '../exceptions';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(
+    const requiredRoles = this.reflector.get<UserRole[]>(
       ROLES_KEY,
-      [context.getHandler(), context.getClass()],
+      context.getHandler(),
     );
 
     if (!requiredRoles) {
@@ -19,7 +22,20 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const requester = request['requester'] as Requester;
-    return requiredRoles.some((role) => requester.role === role);
+    const user = request.user;
+
+    if (!user) {
+      throw new UserUnauthorizedException();
+    }
+
+    if (user.role === UserRole.SUPER_ADMIN) {
+      return true;
+    }
+
+    if (!requiredRoles.includes(user.role)) {
+      throw new UserForbiddenException();
+    }
+
+    return true;
   }
 }

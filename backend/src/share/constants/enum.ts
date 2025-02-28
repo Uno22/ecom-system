@@ -21,6 +21,7 @@ export enum UserGender {
 export enum UserRole {
   USER = 'user',
   ADMIN = 'admin',
+  SUPER_ADMIN = 'super-admin',
 }
 
 export const UserInactivatedStatus = [

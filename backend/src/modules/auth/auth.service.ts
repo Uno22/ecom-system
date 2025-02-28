@@ -39,7 +39,13 @@ export class AuthService implements IAuthService {
       throw new InvalidEmaipAndPasswordException();
     }
 
-    const payload = { email: user.email, sub: user.id };
+    const rawUser = user.get();
+    const payload = {
+      email: rawUser.email,
+      sub: rawUser.id,
+      role: rawUser.role,
+    };
+
     return {
       accessToken: this.jwtService.sign(payload),
     };
@@ -52,7 +58,7 @@ export class AuthService implements IAuthService {
   async validateToken(token: string): Promise<TokenPayload> {
     let decodedToken;
     try {
-      const decodedToken = this.jwtService.verify(token);
+      decodedToken = this.jwtService.verify(token);
       if (!decodedToken) {
         throw new InvalidTokenException();
       }

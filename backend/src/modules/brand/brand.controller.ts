@@ -19,7 +19,6 @@ import { BrandDto, BrandListDto, CondBrandDto } from './dto';
 import {
   ApiBearerAuth,
   ApiBody,
-  ApiExtraModels,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -27,10 +26,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { InvalidQueryDataException } from 'src/share/exceptions';
-import { RemoteAuthGuard } from 'src/share/guards';
+import { RemoteAuthGuard, Roles, RolesGuard } from 'src/share/guards';
+import { UserRole } from 'src/share/constants/enum';
 
 @Controller({ path: 'brands', version: '1' })
-@UseGuards(RemoteAuthGuard)
+@UseGuards(RemoteAuthGuard, RolesGuard)
 @ApiTags('1. Brand')
 @ApiBearerAuth()
 export class BrandController {
@@ -40,6 +40,7 @@ export class BrandController {
   ) {}
 
   @Post()
+  @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Create a new brand' })
   @ApiBody({ type: CreateBrandDto })
   @ApiResponse({
@@ -52,6 +53,7 @@ export class BrandController {
   }
 
   @Get()
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get all brands' })
   @ApiQuery({ name: 'page', required: false, default: 1 })
   @ApiQuery({ name: 'limit', required: false, default: 10 })
@@ -82,6 +84,7 @@ export class BrandController {
   }
 
   @Get(':id')
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get a brand by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiResponse({
@@ -94,6 +97,7 @@ export class BrandController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update a brand by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiBody({ type: UpdateBrandDto })
@@ -107,6 +111,7 @@ export class BrandController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Remove a brand by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiQuery({ name: 'hard', required: false, default: 'false' })

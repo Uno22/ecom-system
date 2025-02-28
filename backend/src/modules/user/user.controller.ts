@@ -19,10 +19,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ParamIdDto } from 'src/share/dto/param.dto';
-import { AuthGuard } from 'src/share/guards';
+import { AuthGuard, Roles, RolesGuard } from 'src/share/guards';
+import { UserRole } from 'src/share/constants/enum';
 
 @Controller({ path: 'users', version: '1' })
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
 @ApiTags('User')
 @ApiBearerAuth()
 export class UserController {
@@ -31,6 +32,7 @@ export class UserController {
   ) {}
 
   @Get(':id')
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get a user by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiBearerAuth()
@@ -39,6 +41,7 @@ export class UserController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update a user by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiBearerAuth()

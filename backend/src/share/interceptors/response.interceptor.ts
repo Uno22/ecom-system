@@ -10,7 +10,6 @@ import { ApiResponseDto } from '../dto';
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<any> {
-    console.log('ResponseInterceptor');
     const request = context.switchToHttp().getRequest();
     const method = request.method;
     const mapppedMethodAndMessages = {
