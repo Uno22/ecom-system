@@ -1,6 +1,7 @@
 import { PagingDto } from 'src/share/dto/paging.dto';
 import { UserRole } from '../constants/enum';
 import { Handler } from 'express';
+import { CreateOptions, CreationAttributes, Model } from 'sequelize';
 
 export interface IService<CreateDTO, UpdateDTO, Entity, Cond> {
   create(data: CreateDTO): Promise<Entity | null>;
@@ -10,8 +11,11 @@ export interface IService<CreateDTO, UpdateDTO, Entity, Cond> {
   remove(id: string, isHardDelete: boolean): Promise<boolean>;
 }
 
-export interface ICommandRepository<Entity, UpdateDto> {
-  insert(data: Entity): Promise<Entity | null>;
+export interface ICommandRepository<Entity extends Model, UpdateDto> {
+  insert(
+    data: CreationAttributes<Entity>,
+    options?: CreateOptions<Entity>,
+  ): Promise<Entity | null>;
   update(id: string, data: UpdateDto): Promise<boolean>;
   delete(id: string, isHardDelete: boolean): Promise<boolean>;
 }
@@ -26,7 +30,7 @@ export interface IQueryRepository<Entity, Cond> {
   findByCond(cond: Cond): Promise<Entity | null>;
 }
 
-export interface IRepository<Entity, UpdateDto, Cond>
+export interface IRepository<Entity extends Model, UpdateDto, Cond>
   extends ICommandRepository<Entity, UpdateDto>,
     IQueryRepository<Entity, Cond> {}
 

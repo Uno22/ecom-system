@@ -13,6 +13,4 @@ export interface IBrandService {
 }
 
 export interface IBrandRepository
-  extends IRepository<Brand, UpdateBrandDto, CondBrandDto> {
-  insert(data: CreationAttributes<Brand>): Promise<Brand | null>;
-}
+  extends IRepository<Brand, UpdateBrandDto, CondBrandDto> {}
