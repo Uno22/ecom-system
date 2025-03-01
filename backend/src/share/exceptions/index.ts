@@ -9,3 +9,4 @@ export * from './user-not-found.exception';
 export * from './user-token-not-found.exception';
 export * from './user-forbidden.exception';
 export * from './user-unauthorized.exception';
+export * from './internal-unauthorized.exception';

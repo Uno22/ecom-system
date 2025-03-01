@@ -26,4 +26,7 @@ export default () => ({
     secretKey: process.env.ACCESS_TOKEN_SECRET_KEY || 'as8f9wfwe',
     expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || '7d',
   },
+  token: {
+    masterToken: process.env.MASTER_TOKEN,
+  },
 });

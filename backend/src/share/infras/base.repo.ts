@@ -13,7 +13,7 @@ import { IRepository, IListEntity } from '../interfaces';
 export class BaseRepository<Entity extends Model, UpdateDto, CondDto>
   implements IRepository<Entity, UpdateDto, CondDto>
 {
-  constructor(private readonly model: ModelStatic<Entity>) {}
+  constructor(readonly model: ModelStatic<Entity>) {}
 
   async insert(
     data: CreationAttributes<Entity>,

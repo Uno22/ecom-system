@@ -10,8 +10,8 @@ import {
   Inject,
   Req,
 } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CreateCategoryDto } from '../dto/create-category.dto';
+import { UpdateCategoryDto } from '../dto/update-category.dto';
 import {
   ApiTags,
   ApiBearerAuth,
@@ -22,14 +22,14 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { RemoteAuthGuard, Roles, RolesGuard } from 'src/share/guards';
-import { CATEGORY_SERVICE } from './category.di-token';
+import { CATEGORY_SERVICE } from '../category.di-token';
 import { UserRole } from 'src/share/constants/enum';
-import { BrandDto } from '../brand/dto';
-import { CategoryDto, CondCategoryDto } from './dto';
+import { BrandDto } from '../../brand/dto';
+import { CategoryDto, CondCategoryDto } from '../dto';
 import { InvalidQueryDataException } from 'src/share/exceptions';
 import { ParamIdDto } from 'src/share/dto';
-import { buildCategoryTree } from './category.utils';
-import { ICategoryService } from './category.interface';
+import { buildCategoryTree } from '../category.utils';
+import { ICategoryService } from '../category.interface';
 
 @Controller({ path: 'categories', version: '1' })
 @UseGuards(RemoteAuthGuard, RolesGuard)

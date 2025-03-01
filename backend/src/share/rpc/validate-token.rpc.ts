@@ -2,11 +2,11 @@ import { IValidateTokenRpc, TokenPayload } from '../interfaces';
 import axios from 'axios';
 
 export class ValidateTokenRpc implements IValidateTokenRpc {
-  constructor(readonly url: string) {}
+  constructor(readonly baseUrl: string) {}
 
   async validateToken(token: string): Promise<TokenPayload | null> {
     try {
-      const { data } = await axios.post(`${this.url}/auth/validate-token`, {
+      const { data } = await axios.post(`${this.baseUrl}/auth/validate-token`, {
         token,
       });
       return data.data;

@@ -10,12 +10,12 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CreateBrandDto } from './dto/create-brand.dto';
-import { UpdateBrandDto } from './dto/update-brand.dto';
-import { BRAND_SERVICE } from './brand.di-token';
-import { IBrandService } from './brand.interface';
+import { CreateBrandDto } from '../dto/create-brand.dto';
+import { UpdateBrandDto } from '../dto/update-brand.dto';
+import { BRAND_SERVICE } from '../brand.di-token';
+import { IBrandService } from '../brand.interface';
 import { ParamIdDto } from 'src/share/dto/param.dto';
-import { BrandDto, BrandListDto, CondBrandDto } from './dto';
+import { BrandDto, BrandListDto, CondBrandDto } from '../dto';
 import {
   ApiBearerAuth,
   ApiBody,
