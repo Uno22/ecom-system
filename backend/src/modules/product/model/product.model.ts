@@ -32,4 +32,9 @@ export class Product extends Model<Product> {
 
   @HasMany(() => ProductItem)
   productItems?: ProductItem[];
+
+  toJSON() {
+    const values = { ...this.get() };
+    return values;
+  }
 }

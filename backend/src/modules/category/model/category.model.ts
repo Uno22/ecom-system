@@ -31,4 +31,9 @@ export class Category extends Model<Category> {
     defaultValue: ModelStatus.ACTIVE,
   })
   status: ModelStatus;
+
+  toJSON() {
+    const values = { ...this.get() };
+    return values;
+  }
 }

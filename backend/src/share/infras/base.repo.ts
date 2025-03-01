@@ -1,5 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { CreationAttributes, CreateOptions, Op, ModelStatic } from 'sequelize';
+import {
+  CreationAttributes,
+  CreateOptions,
+  Op,
+  ModelStatic,
+  FindOptions,
+} from 'sequelize';
 import { Model } from 'sequelize-typescript';
 import { ModelStatus } from '../constants/enum';
 import { PagingDto } from '../dto';
@@ -93,10 +98,14 @@ export class BaseRepository<Entity extends Model, UpdateDto, CondDto>
     };
   }
 
-  async findByCond(cond: CondDto): Promise<Entity | null> {
+  async findByCond(
+    cond: CondDto,
+    options?: FindOptions<Entity>,
+  ): Promise<Entity | null> {
     const data = await this.model.findOne({
       where: cond as any,
       raw: true,
+      ...options,
     });
     if (!data) {
       return null;
