@@ -8,11 +8,11 @@ import {
   Model,
 } from 'sequelize';
 
-export interface IService<CreateDTO, UpdateDTO, Entity, Cond> {
-  create(data: CreateDTO): Promise<Entity | null>;
+export interface IService<Entity, CreateDto, UpdateDto, CondDto> {
+  create(data: CreateDto): Promise<Entity | null>;
   findOne(id: string): Promise<Entity | null>;
-  findAll(cond: Cond, paging: PagingDto): Promise<IListEntity<Entity>>;
-  update(id: string, data: UpdateDTO): Promise<boolean>;
+  findAll(cond: CondDto, paging: PagingDto): Promise<IListEntity<Entity>>;
+  update(id: string, data: UpdateDto): Promise<boolean>;
   remove(id: string, isHardDelete: boolean): Promise<boolean>;
 }
 

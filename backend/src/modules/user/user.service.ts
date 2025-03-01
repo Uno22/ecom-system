@@ -14,6 +14,8 @@ import {
   DataDuplicatedException,
   DataNotFoundException,
 } from 'src/share/exceptions';
+import { PagingDto } from 'src/share/dto';
+import { IListEntity } from 'src/share/interfaces';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -21,6 +23,14 @@ export class UserService implements IUserService {
     @Inject(USER_REPOSITORY)
     private readonly userRepo: IUserRepository,
   ) {}
+
+  findAll(cond: CondUserDto, paging: PagingDto): Promise<IListEntity<User>> {
+    throw new Error('Method not implemented.');
+  }
+
+  remove(id: string, isHardDelete: boolean): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
 
   async create(createUserDto: CreateUserDto) {
     const { email, password } = createUserDto;
