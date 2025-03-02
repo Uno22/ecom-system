@@ -3,6 +3,7 @@ import {
   AddCartItemDto,
   CondCartDto,
   CondCartItemDto,
+  RemoveCartItemDto,
   UpdateCartDto,
   UpdateCartItemDto,
 } from './dto';
@@ -26,4 +27,5 @@ export interface ICartService {
   updateProductQuantityInCart(
     updateProductItemDto: UpdateCartItemDto,
   ): Promise<boolean>;
+  removeProductFromCart(removeCartItemDto: RemoveCartItemDto): Promise<boolean>;
 }

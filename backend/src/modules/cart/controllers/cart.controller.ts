@@ -1,7 +1,15 @@
-import { Body, Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Inject,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CART_SERVICE } from '../cart.di-token';
 import { CartService } from '../cart.service';
-import { AddCartItemDto, UpdateCartItemDto } from '../dto';
+import { AddCartItemDto, RemoveCartItemDto, UpdateCartItemDto } from '../dto';
 import { RemoteAuthGuard } from 'src/share/guards';
 import {
   ApiBearerAuth,
@@ -53,5 +61,24 @@ export class CartController {
     const { sub: userId } = req.user;
     updateCartItemDto.userId = userId;
     return this.cartService.updateProductQuantityInCart(updateCartItemDto);
+  }
+
+  @Delete('remove-product')
+  @ApiOperation({
+    summary: 'Remove product from cart',
+  })
+  @ApiBody({ type: RemoveCartItemDto })
+  @ApiResponse({
+    status: 200,
+    description: 'The product was removed successful',
+    type: Boolean,
+  })
+  removeProductFromCart(
+    @Body() removeCartItemDto: RemoveCartItemDto,
+    @Req() req,
+  ) {
+    const { sub: userId } = req.user;
+    removeCartItemDto.userId = userId;
+    return this.cartService.removeProductFromCart(removeCartItemDto);
   }
 }

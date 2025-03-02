@@ -10,7 +10,7 @@ import {
   ICartRepository,
   ICartService,
 } from './cart.interface';
-import { AddCartItemDto, UpdateCartItemDto } from './dto';
+import { AddCartItemDto, RemoveCartItemDto, UpdateCartItemDto } from './dto';
 import { ModelStatus } from 'src/share/constants/enum';
 import { Cart } from './model/cart.model';
 import { CreationAttributes } from 'sequelize';
@@ -116,7 +116,7 @@ export class CartService implements ICartService {
     });
 
     if (!cartItem) {
-      throw new DataNotFoundException('Cart item not found');
+      throw new DataNotFoundException('Product not found in cart');
     }
 
     const product = await this.cartProductRepo.findById(productItemId!);
@@ -139,6 +139,34 @@ export class CartService implements ICartService {
     await this.cartItemRepo.update(cartItem.id, {
       quantity: quantityUserWantToBuy,
     });
+
+    return true;
+  }
+
+  async removeProductFromCart(
+    removeCartItemDto: RemoveCartItemDto,
+  ): Promise<boolean> {
+    const { userId, productItemId } = removeCartItemDto;
+
+    const activeCart = await this.cartRepo.findByCond({
+      userId,
+      status: ModelStatus.ACTIVE,
+    });
+
+    if (!activeCart) {
+      throw new DataNotFoundException('Cart not found');
+    }
+
+    const cartItem = await this.cartItemRepo.findByCond({
+      cartId: activeCart.id,
+      productItemId,
+    });
+
+    if (!cartItem) {
+      throw new DataNotFoundException('Product not found in cart');
+    }
+
+    await this.cartItemRepo.delete(cartItem.id, true);
 
     return true;
   }
