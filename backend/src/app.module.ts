@@ -9,6 +9,10 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SharedModule } from './share/share.module';
 import { CategoryModule } from './modules/category/category.module';
+import { ProductModule } from './modules/product/product.module';
+import { VariantModule } from './modules/variant/variant.module';
+import { ProductItemVariantModule } from './modules/product-item-variant/product-item-variant.module';
+import { ProductItemModule } from './modules/product-item/product-item.module';
 
 @Module({
   imports: [
@@ -40,6 +44,10 @@ import { CategoryModule } from './modules/category/category.module';
     UserModule,
     AuthModule,
     CategoryModule,
+    ProductModule,
+    ProductItemModule,
+    VariantModule,
+    ProductItemVariantModule,
   ],
   controllers: [AppController],
   providers: [AppService],

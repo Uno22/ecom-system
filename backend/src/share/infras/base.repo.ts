@@ -67,17 +67,21 @@ export class BaseRepository<Entity extends Model, UpdateDto, CondDto>
   async list(
     cond: CondDto,
     paging: PagingDto,
-    options?: object,
+    options: object,
   ): Promise<IListEntity<Entity>> {
     const { limit, page } = paging;
+    const { type, ...restOptions } = (options || {}) as any;
     const condSQL = { ...cond, status: { [Op.ne]: ModelStatus.DELETED } };
     const findOptions = {
       where: condSQL,
-      limit,
-      offset: (page - 1) * limit,
+      ...(type !== 'all' && {
+        limit,
+        offset: (page - 1) * limit,
+      }),
       order: [['id', 'DESC']],
       raw: true,
-      ...options,
+      distinct: true,
+      ...restOptions,
     } as any;
     const { count, rows } = await this.model.findAndCountAll(findOptions);
     let rawData = rows;

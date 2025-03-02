@@ -61,7 +61,7 @@ export class UserService implements IUserService {
       newUser as CreationAttributes<User>,
     );
 
-    return omit(createdUser, ['password']);
+    return omit(createdUser, ['password']) as any;
   }
 
   async findOne(id: string) {
