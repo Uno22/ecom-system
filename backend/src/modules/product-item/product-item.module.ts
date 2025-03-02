@@ -2,7 +2,6 @@ import { Module, Provider } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ProductItem } from '../product-item/model/product-item.model';
 import { ProductItemService } from './product-item.service';
-import { ProductItemController } from './product-item.controller';
 import {
   PRODUCT_ITEM_REPOSITORY,
   PRODUCT_ITEM_SERVICE,
@@ -20,6 +19,8 @@ import { ConfigService } from '@nestjs/config';
 import { ProductBrandRpc } from '../product/rpc/product-brand.rpc';
 import { ProductCategoryRpc } from '../product/rpc/product-category.rpc';
 import { ProductItemVariant } from '../product-item-variant/product-item-variant.model';
+import { ProductItemController } from './controllers/product-item.controller';
+import { ProductItemInternalController } from './controllers/product-item.internal.controller';
 
 const dependencies: Provider[] = [
   { provide: PRODUCT_ITEM_SERVICE, useClass: ProductItemService },
@@ -28,7 +29,7 @@ const dependencies: Provider[] = [
   {
     provide: PRODUCT_BRAND_RPC,
     useFactory: (configService: ConfigService) => {
-      const url = configService.get<string>('rpc.productBrandBaseUrl', '');
+      const url = configService.get<string>('rpc.brandBaseUrl', '');
       const token: string = configService.get<string>('token.masterToken', '');
       return new ProductBrandRpc(url, token);
     },
@@ -37,7 +38,7 @@ const dependencies: Provider[] = [
   {
     provide: PRODUCT_CATEGORY_RPC,
     useFactory: (configService: ConfigService) => {
-      const url = configService.get<string>('rpc.productCategoryBaseUrl', '');
+      const url = configService.get<string>('rpc.categoryBaseUrl', '');
       const token: string = configService.get<string>('token.masterToken', '');
       return new ProductCategoryRpc(url, token);
     },
@@ -50,7 +51,7 @@ const dependencies: Provider[] = [
     SequelizeModule.forFeature([ProductItem, Product, ProductItemVariant]),
     VariantModule,
   ],
-  controllers: [ProductItemController],
+  controllers: [ProductItemController, ProductItemInternalController],
   providers: [...dependencies],
 })
 export class ProductItemModule {}

@@ -13,6 +13,7 @@ import { ProductModule } from './modules/product/product.module';
 import { VariantModule } from './modules/variant/variant.module';
 import { ProductItemVariantModule } from './modules/product-item-variant/product-item-variant.module';
 import { ProductItemModule } from './modules/product-item/product-item.module';
+import { CartModule } from './modules/cart/cart.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { ProductItemModule } from './modules/product-item/product-item.module';
     ProductItemModule,
     VariantModule,
     ProductItemVariantModule,
+    CartModule,
   ],
   controllers: [AppController],
   providers: [AppService],

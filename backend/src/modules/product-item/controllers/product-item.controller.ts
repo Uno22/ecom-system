@@ -6,11 +6,11 @@ import {
   ApiTags,
   ApiQuery,
 } from '@nestjs/swagger';
-import { CreateProductItemDto, ProductItemDto } from './dto';
-import { PRODUCT_ITEM_SERVICE } from './product-item.di-token';
-import { IProductItemService } from './product-item.interface';
+import { CondCategoryDto } from 'src/modules/category/dto';
 import { InvalidQueryDataException } from 'src/share/exceptions';
-import { CondCategoryDto } from '../category/dto';
+import { CreateProductItemDto, ProductItemDto } from '../dto';
+import { PRODUCT_ITEM_SERVICE } from '../product-item.di-token';
+import { IProductItemService } from '../product-item.interface';
 
 @Controller({ path: 'product-items', version: '1' })
 @ApiTags('Product Item')
@@ -59,6 +59,6 @@ export class ProductItemController {
 
     const cond: CondCategoryDto = name ? { name } : {};
 
-    return this.productItemService.findAll(cond, paging);
+    return await this.productItemService.findAll(cond, paging);
   }
 }

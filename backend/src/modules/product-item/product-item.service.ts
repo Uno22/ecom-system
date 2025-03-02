@@ -1,4 +1,4 @@
-import { Get, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   IProductItemRepository,
   IProductItemService,
@@ -12,8 +12,6 @@ import {
   CreateProductItemDto,
   CondProductItemDto,
   UpdateProductItemDto,
-  ProductItemDto,
-  ProductItemAttributeDto,
 } from './dto';
 import { ProductItem } from './model/product-item.model';
 import { PRODUCT_ITEM_REPOSITORY } from './product-item.di-token';
@@ -33,14 +31,11 @@ import {
   DataDuplicatedException,
   DataNotFoundException,
 } from 'src/share/exceptions';
-import { CreationAttributes, Op } from 'sequelize';
+import { Op } from 'sequelize';
 import { ProductItemVariant } from '../product-item-variant/product-item-variant.model';
 import { Product } from '../product/model/product.model';
 import { VariantItem } from '../variant/model/variant-item.model';
 import { Variant } from '../variant/model/variant.model';
-import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { CategoryDto } from '../category/dto';
-import { raw } from 'mysql2';
 import {
   formatAttributes,
   isAttributesDuplicateValue,
@@ -150,8 +145,12 @@ export class ProductItemService implements IProductItemService {
     return this.productItemRepo.insert(newEntity as any);
   }
 
-  findOne(id: string): Promise<ProductItem | null> {
-    throw new Error('Method not implemented.');
+  async findOne(id: string, options?: object): Promise<ProductItem | null> {
+    const data = await this.productItemRepo.get(id, options);
+    if (!data || data.status === ModelStatus.DELETED) {
+      throw new DataNotFoundException();
+    }
+    return data;
   }
 
   async findAll(
