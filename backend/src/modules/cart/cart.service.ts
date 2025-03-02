@@ -8,21 +8,22 @@ import {
   ICartItemRepository,
   ICartProductRpc,
   ICartRepository,
+  ICartService,
 } from './cart.interface';
-import { AddCartItemDto } from './dto';
+import { AddCartItemDto, UpdateCartItemDto } from './dto';
 import { ModelStatus } from 'src/share/constants/enum';
 import { Cart } from './model/cart.model';
 import { CreationAttributes } from 'sequelize';
 import { v7 } from 'uuid';
 import {
   CartCreationFailedException,
-  CustomBadRequestException,
   DataNotFoundException,
+  ProductInsufficientQuantityException,
 } from 'src/share/exceptions';
 import { CartItem } from './model/cart-item.model';
 
 @Injectable()
-export class CartService {
+export class CartService implements ICartService {
   constructor(
     @Inject(CART_REPOSITORY) private readonly cartRepo: ICartRepository,
     @Inject(CART_ITEM_REPOSITORY)
@@ -70,10 +71,7 @@ export class CartService {
     if (currentCartItem) {
       const quantityUserWantToBuy = currentCartItem.quantity + newQuantity;
       if (quantityInDB < quantityUserWantToBuy) {
-        throw new CustomBadRequestException(
-          'Product is not available in sufficient quantity',
-          'PRODUCT_SUFFICIENT_QUANTITY',
-        );
+        throw new ProductInsufficientQuantityException();
       }
 
       await this.cartItemRepo.update(currentCartItem.id, {
@@ -82,10 +80,7 @@ export class CartService {
     } else {
       const quantityUserWantToBuy = newQuantity;
       if (quantityInDB < quantityUserWantToBuy) {
-        throw new CustomBadRequestException(
-          'Product is not available in sufficient quantity',
-          'PRODUCT_SUFFICIENT_QUANTITY',
-        );
+        throw new ProductInsufficientQuantityException();
       }
 
       await this.cartItemRepo.insert({
@@ -97,6 +92,53 @@ export class CartService {
         updatedAt: new Date(),
       } as CreationAttributes<CartItem>);
     }
+
+    return true;
+  }
+
+  async updateProductQuantityInCart(
+    updateCartItemDto: UpdateCartItemDto,
+  ): Promise<boolean> {
+    const { userId, productItemId, quantity } = updateCartItemDto;
+
+    // find active cart for authenciated user
+    const activeCart = await this.cartRepo.findByCond({
+      userId,
+      status: ModelStatus.ACTIVE,
+    });
+    if (!activeCart) {
+      throw new DataNotFoundException('Cart not found');
+    }
+
+    const cartItem = await this.cartItemRepo.findByCond({
+      cartId: activeCart.id,
+      productItemId,
+    });
+
+    if (!cartItem) {
+      throw new DataNotFoundException('Cart item not found');
+    }
+
+    const product = await this.cartProductRepo.findById(productItemId!);
+    if (!product) {
+      throw new DataNotFoundException('Product not found');
+    }
+
+    const quantityInDB = product.quantity - (product.reservedQuantity || 0);
+    const quantityUserWantToBuy = quantity!;
+
+    if (quantityInDB < quantityUserWantToBuy) {
+      throw new ProductInsufficientQuantityException();
+    }
+
+    if (quantityUserWantToBuy === 0) {
+      await this.cartItemRepo.delete(cartItem.id, true);
+      return true;
+    }
+
+    await this.cartItemRepo.update(cartItem.id, {
+      quantity: quantityUserWantToBuy,
+    });
 
     return true;
   }

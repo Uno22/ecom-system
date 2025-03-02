@@ -12,3 +12,4 @@ export * from './user-unauthorized.exception';
 export * from './internal-unauthorized.exception';
 export * from './cart-creation-failed.exception';
 export * from './custom-bad-request.exception';
+export * from './product-insufficient-quantity.exception';
