@@ -6,12 +6,12 @@ import {
 import { PagingDto } from 'src/share/dto';
 import { IListEntity } from 'src/share/interfaces';
 import {
-  ListProductItemByIdDto,
   ValidateAndReserveProductItemDto,
   FinalizeOrderDto,
   CreateProductItemDto,
   CondProductItemDto,
   UpdateProductItemDto,
+  ListProductItemByIdsDto,
 } from './dto';
 import { ProductItem } from './model/product-item.model';
 import { PRODUCT_ITEM_REPOSITORY } from './product-item.di-token';
@@ -44,6 +44,8 @@ import {
 import { AttributeDuplicatedException } from 'src/share/exceptions/attribute-duplicate.exception';
 import { v7 } from 'uuid';
 import { ModelStatus } from 'src/share/constants/enum';
+import { includes } from 'lodash';
+import { raw } from 'mysql2';
 
 @Injectable()
 export class ProductItemService implements IProductItemService {
@@ -198,9 +200,47 @@ export class ProductItemService implements IProductItemService {
   remove(id: string, isHardDelete: boolean): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
-  listByIds(payload: ListProductItemByIdDto): Promise<Array<ProductItem>> {
-    throw new Error('Method not implemented.');
+
+  async listByIds(
+    payload: ListProductItemByIdsDto,
+  ): Promise<Array<ProductItem>> {
+    const { ids, attributes } = payload;
+    const queryCond = { id: { [Op.in]: ids } } as any;
+    const paging = {
+      page: 1,
+      limit: ids.length,
+    };
+
+    const result = await this.productItemRepo.list(queryCond, paging, {
+      ...(attributes && {
+        attributes,
+      }),
+      include: [
+        {
+          model: ProductItemVariant,
+          attributes: [['variant_item_id', 'variantItemId']],
+          include: [
+            {
+              model: VariantItem,
+              attributes: [['variant_id', 'variantId'], 'value'],
+              include: [
+                {
+                  model: Variant,
+                  attributes: ['name'],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      raw: false,
+    });
+
+    result.data.forEach((data: ProductItem) => formatAttributes(data));
+
+    return result.data;
   }
+
   listyByProductId(id: string): Promise<Array<ProductItem>> {
     throw new Error('Method not implemented.');
   }

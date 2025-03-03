@@ -15,6 +15,7 @@ import { Cart } from './model/cart.model';
 import { CartProductRpc } from './rpc/cart-product.rpc';
 import { ConfigService } from '@nestjs/config';
 import { SharedModule } from 'src/share/share.module';
+import { CartInternalController } from './controllers/cart.internal.controller';
 
 const dependencies: Provider[] = [
   { provide: CART_SERVICE, useClass: CartService },
@@ -33,7 +34,7 @@ const dependencies: Provider[] = [
 
 @Module({
   imports: [SequelizeModule.forFeature([Cart, CartItem]), SharedModule],
-  controllers: [CartController],
+  controllers: [CartController, CartInternalController],
   providers: [...dependencies],
 })
 export class CartModule {}

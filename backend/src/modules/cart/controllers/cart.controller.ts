@@ -2,14 +2,19 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Inject,
   Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { CART_SERVICE } from '../cart.di-token';
-import { CartService } from '../cart.service';
-import { AddCartItemDto, RemoveCartItemDto, UpdateCartItemDto } from '../dto';
+import {
+  AddCartItemDto,
+  CartDto,
+  RemoveCartItemDto,
+  UpdateCartItemDto,
+} from '../dto';
 import { RemoteAuthGuard } from 'src/share/guards';
 import {
   ApiBearerAuth,
@@ -18,6 +23,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { ICartService } from '../cart.interface';
 
 @Controller('carts')
 @UseGuards(RemoteAuthGuard)
@@ -25,8 +31,22 @@ import {
 @ApiBearerAuth()
 export class CartController {
   constructor(
-    @Inject(CART_SERVICE) private readonly cartService: CartService,
+    @Inject(CART_SERVICE) private readonly cartService: ICartService,
   ) {}
+
+  @Get()
+  @ApiOperation({
+    summary: 'Get active cart',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Resposne active cart or null',
+    type: CartDto || null,
+  })
+  async getActiveCart(@Req() req) {
+    const { sub: userId } = req.user;
+    return this.cartService.getActiveCart(userId);
+  }
 
   @Post()
   @ApiOperation({

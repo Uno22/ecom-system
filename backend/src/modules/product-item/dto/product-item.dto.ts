@@ -244,9 +244,14 @@ export class ValidateAndReserveProductItemDto {
 
 export class FinalizeOrderDto extends ValidateAndReserveProductItemDto {}
 
-export class ListProductItemByIdDto {
+export class ListProductItemByIdsDto {
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => UUID)
+  @IsString({ each: true })
+  @IsNotEmpty()
   ids: string[];
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  attributes?: string[];
 }

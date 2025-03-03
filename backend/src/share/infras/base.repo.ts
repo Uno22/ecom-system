@@ -115,6 +115,10 @@ export class BaseRepository<Entity extends Model, UpdateDto, CondDto>
       return null;
     }
 
+    if ((data as any)._previousDataValues) {
+      return data.get({ plain: true });
+    }
+
     return data as Entity;
   }
 }

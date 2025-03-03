@@ -62,4 +62,11 @@ export class CartProductDto {
   @Min(0)
   @IsOptional()
   reservedQuantity?: number;
+
+  @ApiProperty({
+    description:
+      'The list of attributes of product item such as: name and value',
+  })
+  @IsOptional()
+  attributes?: object[];
 }

@@ -78,3 +78,13 @@ export class CartItemDto {
 
   cart?: { userId: string };
 }
+
+export class GetInternalCartDto {
+  @ApiProperty({
+    example: '01954067-e76c-7864-ac12-de61732b338a',
+    description: 'The id of user',
+  })
+  @IsUUID()
+  @IsNotEmpty()
+  userId: string;
+}

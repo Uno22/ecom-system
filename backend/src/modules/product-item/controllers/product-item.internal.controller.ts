@@ -5,12 +5,14 @@ import {
   UseGuards,
   Post,
   Param,
+  Body,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PRODUCT_ITEM_SERVICE } from '../product-item.di-token';
 import { IProductItemService } from '../product-item.interface';
 import { AuthInternalGuard } from 'src/share/guards';
 import { ParamIdDto } from 'src/share/dto';
+import { ListProductItemByIdsDto } from '../dto';
 
 @Controller({ path: 'internal/product-items', version: '1' })
 @UseGuards(AuthInternalGuard)
@@ -36,7 +38,7 @@ export class ProductItemInternalController {
   }
 
   @Post('list-by-ids')
-  findByIds() {
-    return [];
+  async findByIds(@Body() body: ListProductItemByIdsDto) {
+    return this.productItemService.listByIds(body);
   }
 }

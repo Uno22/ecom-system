@@ -1,6 +1,7 @@
 import { IRepository } from 'src/share/interfaces';
 import {
   AddCartItemDto,
+  CartDto,
   CondCartDto,
   CondCartItemDto,
   RemoveCartItemDto,
@@ -19,10 +20,14 @@ export interface ICartItemRepository
 
 export interface ICartProductRpc {
   findById(id: string): Promise<CartProductDto | null>;
-  findByIds(ids: string[]): Promise<Array<CartProductDto>>;
+  findByIds(
+    ids: string[],
+    attributes?: string[],
+  ): Promise<Array<CartProductDto>>;
 }
 
 export interface ICartService {
+  getActiveCart(userId: string): Promise<CartDto | null>;
   addProductToCart(payload: AddCartItemDto): Promise<boolean>;
   updateProductQuantityInCart(
     updateProductItemDto: UpdateCartItemDto,

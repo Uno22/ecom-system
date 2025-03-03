@@ -10,7 +10,12 @@ import {
   ICartRepository,
   ICartService,
 } from './cart.interface';
-import { AddCartItemDto, RemoveCartItemDto, UpdateCartItemDto } from './dto';
+import {
+  AddCartItemDto,
+  CartDto,
+  RemoveCartItemDto,
+  UpdateCartItemDto,
+} from './dto';
 import { ModelStatus } from 'src/share/constants/enum';
 import { Cart } from './model/cart.model';
 import { CreationAttributes } from 'sequelize';
@@ -21,6 +26,7 @@ import {
   ProductInsufficientQuantityException,
 } from 'src/share/exceptions';
 import { CartItem } from './model/cart-item.model';
+import { CartProductDto } from './dto/cart-product.dto';
 
 @Injectable()
 export class CartService implements ICartService {
@@ -31,6 +37,61 @@ export class CartService implements ICartService {
     @Inject(CART_PRODUCT_RPC)
     private readonly cartProductRepo: ICartProductRpc,
   ) {}
+
+  async getActiveCart(userId: string): Promise<CartDto | null> {
+    const activeCart = await this.cartRepo.findByCond(
+      {
+        userId,
+        status: ModelStatus.ACTIVE,
+      },
+      {
+        raw: false,
+        include: [
+          {
+            model: CartItem,
+          },
+        ],
+      },
+    );
+
+    if (!activeCart) {
+      //throw new DataNotFoundException('Cart not found');
+      return null;
+    }
+
+    const productItemIds = activeCart.cartItems?.map(
+      ({ productItemId }) => productItemId,
+    );
+
+    if (productItemIds && productItemIds.length > 0) {
+      const products = await this.cartProductRepo.findByIds(productItemIds, [
+        'id',
+        'name',
+        'salePrice',
+        'price',
+        'quantity',
+        'reservedQuantity',
+      ]);
+
+      const mappedProducts = new Map<string, CartProductDto>();
+      products.forEach((product) => {
+        mappedProducts.set(product.id, product);
+      });
+
+      activeCart.cartItems = activeCart.cartItems?.map((item) => {
+        const product = mappedProducts.get(item.productItemId) || ({} as any);
+        return {
+          ...item,
+          name: product.name || '',
+          price: product.price || 0,
+          salePrice: product.salePrice || 0,
+          attributes: product.attributes || [],
+        };
+      }) as any;
+    }
+
+    return activeCart;
+  }
 
   async addProductToCart(payload: AddCartItemDto): Promise<boolean> {
     const { userId, productItemId, quantity: newQuantity } = payload;

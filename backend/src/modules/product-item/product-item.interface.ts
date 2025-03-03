@@ -3,7 +3,7 @@ import {
   CondProductItemDto,
   CreateProductItemDto,
   FinalizeOrderDto,
-  ListProductItemByIdDto,
+  ListProductItemByIdsDto,
   UpdateProductItemDto,
   ValidateAndReserveProductItemDto,
 } from './dto';
@@ -16,7 +16,7 @@ export interface IProductItemService
     UpdateProductItemDto,
     CondProductItemDto
   > {
-  listByIds(payload: ListProductItemByIdDto): Promise<Array<ProductItem>>;
+  listByIds(payload: ListProductItemByIdsDto): Promise<Array<ProductItem>>;
   listyByProductId(id: string): Promise<Array<ProductItem>>;
   validateAndReserve(
     payload: ValidateAndReserveProductItemDto,

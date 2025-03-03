@@ -31,15 +31,18 @@ export class CartProductRpc implements ICartProductRpc {
     return null;
   }
 
-  async findByIds(ids: string[]): Promise<Array<CartProductDto>> {
+  async findByIds(
+    ids: string[],
+    attributes?: string[],
+  ): Promise<Array<CartProductDto>> {
     try {
       const { data } = await this.axiosInstance.post<
         ApiResponseDto<Array<CartProductDto>>
-      >(`/internal/product-items/list-by-ids`, { ids });
+      >(`/internal/product-items/list-by-ids`, { ids, attributes });
       return data.data || [];
     } catch (error) {
       console.error(
-        '[ERROR] ********** CartProductRpc findById get error:',
+        '[ERROR] ********** CartProductRpc findByIds get error:',
         error.response?.data || error.message,
       );
     }
