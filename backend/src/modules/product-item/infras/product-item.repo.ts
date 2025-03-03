@@ -15,7 +15,6 @@ import { Sequelize } from 'sequelize-typescript';
 import { ProductItemVariant } from 'src/modules/product-item-variant/product-item-variant.model';
 import { v7 } from 'uuid';
 import { ModelStatus } from 'src/share/constants/enum';
-import { omit } from 'lodash';
 
 @Injectable()
 export class ProductItemRepository

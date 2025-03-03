@@ -14,6 +14,7 @@ import { VariantModule } from './modules/variant/variant.module';
 import { ProductItemVariantModule } from './modules/product-item-variant/product-item-variant.module';
 import { ProductItemModule } from './modules/product-item/product-item.module';
 import { CartModule } from './modules/cart/cart.module';
+import { OrderModule } from './modules/order/order.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { CartModule } from './modules/cart/cart.module';
     VariantModule,
     ProductItemVariantModule,
     CartModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
