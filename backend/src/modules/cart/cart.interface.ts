@@ -4,6 +4,7 @@ import {
   CartDto,
   CondCartDto,
   CondCartItemDto,
+  DeleteCartItemDto,
   RemoveCartItemDto,
   UpdateCartDto,
   UpdateCartItemDto,
@@ -16,7 +17,10 @@ export interface ICartRepository
   extends IRepository<Cart, UpdateCartDto, CondCartDto> {}
 
 export interface ICartItemRepository
-  extends IRepository<CartItem, UpdateCartItemDto, CondCartItemDto> {}
+  extends IRepository<CartItem, UpdateCartItemDto, CondCartItemDto> {
+  deleteByCartId(cartId: string): Promise<boolean>;
+  deleteCartItemByIds(ids: string[]): Promise<boolean>;
+}
 
 export interface ICartProductRpc {
   findById(id: string): Promise<CartProductDto | null>;
@@ -33,4 +37,6 @@ export interface ICartService {
     updateProductItemDto: UpdateCartItemDto,
   ): Promise<boolean>;
   removeProductFromCart(removeCartItemDto: RemoveCartItemDto): Promise<boolean>;
+  deleteCart(cartId: string): Promise<boolean>;
+  deleteCartItemByIds(deleteCartItemDto: DeleteCartItemDto): Promise<boolean>;
 }

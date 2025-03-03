@@ -13,6 +13,7 @@ import {
 import {
   AddCartItemDto,
   CartDto,
+  DeleteCartItemDto,
   RemoveCartItemDto,
   UpdateCartItemDto,
 } from './dto';
@@ -230,5 +231,20 @@ export class CartService implements ICartService {
     await this.cartItemRepo.delete(cartItem.id, true);
 
     return true;
+  }
+
+  async deleteCart(cartId: string): Promise<boolean> {
+    const isHardDelete = true;
+    const deleteResult = await this.cartRepo.delete(cartId, isHardDelete);
+    if (isHardDelete) {
+      await this.cartItemRepo.deleteByCartId(cartId);
+    }
+    return deleteResult;
+  }
+
+  async deleteCartItemByIds(
+    deleteCartItemDto: DeleteCartItemDto,
+  ): Promise<boolean> {
+    return this.cartItemRepo.deleteCartItemByIds(deleteCartItemDto.ids);
   }
 }

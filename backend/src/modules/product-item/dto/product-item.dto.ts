@@ -232,7 +232,7 @@ export class ReserveProductItemDto {
 
   @IsNumber()
   @Min(1)
-  reserveQuantity: string;
+  reserveQuantity: number;
 }
 
 export class ValidateAndReserveProductItemDto {
@@ -254,4 +254,31 @@ export class ListProductItemByIdsDto {
   @IsString({ each: true })
   @IsOptional()
   attributes?: string[];
+}
+
+export class ReserveProductItem {
+  @ApiProperty({
+    example: '01954067-e76c-7864-ac12-de61732b338a',
+    description: 'The id of product item',
+  })
+  @IsUUID()
+  @IsNotEmpty()
+  productItemId: string;
+
+  @ApiProperty({
+    description:
+      'The reserved quantity when customer place order but not finish payment yet',
+  })
+  @IsNumber()
+  @Min(1)
+  @IsNotEmpty()
+  reserveQuantity: number;
+}
+
+export class ReserveProductItemOrderDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ReserveProductItem)
+  @IsNotEmpty()
+  productItems: ReserveProductItem[];
 }

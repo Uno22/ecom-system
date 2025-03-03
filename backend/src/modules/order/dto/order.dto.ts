@@ -90,7 +90,7 @@ export class OrderDto {
     example: '0908776543',
     description: 'The phone number of recipient',
   })
-  @IsPhoneNumber()
+  @IsPhoneNumber('VN')
   @IsNotEmpty()
   recipientPhone: string;
 

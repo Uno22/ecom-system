@@ -33,6 +33,7 @@ export class Order extends Model<Order> {
 
   @Column({
     type: DataType.ENUM(...Object.values(ShippingMethod)),
+    field: 'shipping_method',
     allowNull: false,
   })
   declare shippingMethod: ShippingMethod;
@@ -127,5 +128,5 @@ export class Order extends Model<Order> {
     type: DataType.JSON,
     allowNull: true,
   })
-  declare history?: string;
+  declare history?: object;
 }

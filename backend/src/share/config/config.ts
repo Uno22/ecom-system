@@ -17,8 +17,7 @@ export default () => ({
     brandBaseUrl: process.env.RPC_BRAND_BASE_URL || `http://localhost:${port}`,
     productBaseUrl:
       process.env.RPC_PRODUCT_BASE_URL || `http://localhost:${port}`,
-    verifyTokenBaseUrl:
-      process.env.RPC_VERIFY_TOKEN_BASE_URL || `http://localhost:${port}`,
+    cartBaseUrl: process.env.RPC_CART_BASE_URL || `http://localhost:${port}`,
   },
   accessToken: {
     secretKey: process.env.ACCESS_TOKEN_SECRET_KEY || 'as8f9wfwe',

@@ -1,8 +1,10 @@
+import { CreationAttributes } from 'sequelize';
 import { CreateOrderDto, OrderCartDto, UpdateOrderDto } from './dto';
 import { Order } from './model/order.model';
+import { ReserveProductItemDto } from '../product-item/dto';
 
 export interface IOrderRepository {
-  insert(data: Order): Promise<boolean>;
+  insert(data: CreationAttributes<Order>): Promise<boolean>;
   update(id: string, data: UpdateOrderDto): Promise<boolean>;
   delete(id: string, isHardDelete: boolean): Promise<boolean>;
 }
@@ -13,5 +15,9 @@ export interface IOrderService {
 
 export interface IOrderCartRpc {
   getCartByUserId(userId: string): Promise<OrderCartDto | null>;
-  deleteCartById(id: string): Promise<boolean>;
+  deleteCartItemByIds(ids: string[]): Promise<boolean>;
+}
+
+export interface IOrderProductRpc {
+  reserveProduct(productItems: ReserveProductItemDto[]): Promise<boolean>;
 }

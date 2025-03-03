@@ -6,6 +6,7 @@ import { OrderItem } from '../model/oder-item.model';
 import { IOrderRepository } from '../order.interface';
 import { UpdateOrderDto } from '../dto';
 import { Sequelize } from 'sequelize-typescript';
+import { OrderStatus } from 'src/share/constants/enum';
 
 @Injectable()
 export class OrderRepository implements IOrderRepository {
@@ -16,7 +17,7 @@ export class OrderRepository implements IOrderRepository {
     private readonly sequelize: Sequelize,
   ) {}
 
-  async insert(data: Order): Promise<boolean> {
+  async insert(data: CreationAttributes<Order>): Promise<boolean> {
     const transaction = await this.sequelize.transaction();
     try {
       await this.orderModel.create(data, { transaction });
@@ -37,7 +38,21 @@ export class OrderRepository implements IOrderRepository {
     throw new Error('Method not implemented.');
   }
 
-  delete(id: string, isHardDelete: boolean): Promise<boolean> {
-    throw new Error('Method not implemented.');
+  async delete(id: string, isHardDelete: boolean): Promise<boolean> {
+    if (isHardDelete) {
+      const deletedRow = await this.orderModel.destroy({
+        where: { id },
+      } as any);
+      await this.orderItemModel.destroy({
+        where: { orderId: id },
+      });
+      return deletedRow > 0;
+    }
+
+    const [affectedRows] = await this.orderModel.update(
+      { status: OrderStatus.DELETED },
+      { where: { id } } as any,
+    );
+    return affectedRows > 0;
   }
 }

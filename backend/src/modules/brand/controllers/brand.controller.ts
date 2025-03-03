@@ -79,7 +79,7 @@ export class BrandController {
     }
 
     const cond: CondBrandDto = name ? { name } : {};
-    console.log('req', req.user);
+
     return this.service.findAll(cond, paging);
   }
 

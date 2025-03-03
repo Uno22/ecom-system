@@ -12,7 +12,7 @@ import { PRODUCT_ITEM_SERVICE } from '../product-item.di-token';
 import { IProductItemService } from '../product-item.interface';
 import { AuthInternalGuard } from 'src/share/guards';
 import { ParamIdDto } from 'src/share/dto';
-import { ListProductItemByIdsDto } from '../dto';
+import { ListProductItemByIdsDto, ReserveProductItemOrderDto } from '../dto';
 
 @Controller({ path: 'internal/product-items', version: '1' })
 @UseGuards(AuthInternalGuard)
@@ -40,5 +40,12 @@ export class ProductItemInternalController {
   @Post('list-by-ids')
   async findByIds(@Body() body: ListProductItemByIdsDto) {
     return this.productItemService.listByIds(body);
+  }
+
+  @Post('/reserve')
+  async reserveProductItems(@Body() payload: ReserveProductItemOrderDto) {
+    return this.productItemService.reserveProductItemDuringOrderCreation(
+      payload,
+    );
   }
 }

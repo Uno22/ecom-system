@@ -6,12 +6,12 @@ import {
 import { PagingDto } from 'src/share/dto';
 import { IListEntity } from 'src/share/interfaces';
 import {
-  ValidateAndReserveProductItemDto,
   FinalizeOrderDto,
   CreateProductItemDto,
   CondProductItemDto,
   UpdateProductItemDto,
   ListProductItemByIdsDto,
+  ReserveProductItemOrderDto,
 } from './dto';
 import { ProductItem } from './model/product-item.model';
 import { PRODUCT_ITEM_REPOSITORY } from './product-item.di-token';
@@ -28,6 +28,7 @@ import {
 import { VARIANT_SERVICE } from '../variant/variant.di-token';
 import { IVariantService } from '../variant/variant.interface';
 import {
+  CustomConflictException,
   DataDuplicatedException,
   DataNotFoundException,
 } from 'src/share/exceptions';
@@ -44,8 +45,7 @@ import {
 import { AttributeDuplicatedException } from 'src/share/exceptions/attribute-duplicate.exception';
 import { v7 } from 'uuid';
 import { ModelStatus } from 'src/share/constants/enum';
-import { includes } from 'lodash';
-import { raw } from 'mysql2';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class ProductItemService implements IProductItemService {
@@ -60,6 +60,7 @@ export class ProductItemService implements IProductItemService {
     private readonly productBrandRepo: IProductBrandRpc,
     @Inject(PRODUCT_CATEGORY_RPC)
     private readonly productCategoryRepo: IProductCategoryRpc,
+    private readonly sequelize: Sequelize,
   ) {}
 
   async create(data: CreateProductItemDto): Promise<ProductItem | null> {
@@ -244,11 +245,33 @@ export class ProductItemService implements IProductItemService {
   listyByProductId(id: string): Promise<Array<ProductItem>> {
     throw new Error('Method not implemented.');
   }
-  validateAndReserve(
-    payload: ValidateAndReserveProductItemDto,
+
+  async reserveProductItemDuringOrderCreation(
+    payload: ReserveProductItemOrderDto,
   ): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    const transaction = await this.sequelize.transaction();
+
+    try {
+      const updatedRows = await this.productItemRepo.reserveProductItems(
+        payload.productItems,
+        transaction,
+      );
+
+      if (updatedRows.some(([rows]) => rows === 0)) {
+        throw new CustomConflictException(
+          'Some products do not have enough quantity',
+          'PRODUCT_INSUFFICIENT_QUANTITY',
+        );
+      }
+
+      await transaction.commit();
+      return true;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   }
+
   finalizeOrder(data: FinalizeOrderDto): Promise<boolean> {
     throw new Error('Method not implemented.');
   }

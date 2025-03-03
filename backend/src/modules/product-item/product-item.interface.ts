@@ -4,10 +4,12 @@ import {
   CreateProductItemDto,
   FinalizeOrderDto,
   ListProductItemByIdsDto,
+  ReserveProductItem,
+  ReserveProductItemOrderDto,
   UpdateProductItemDto,
-  ValidateAndReserveProductItemDto,
 } from './dto';
 import { IRepository, IService } from 'src/share/interfaces';
+import { Transaction } from 'sequelize';
 
 export interface IProductItemService
   extends IService<
@@ -18,14 +20,17 @@ export interface IProductItemService
   > {
   listByIds(payload: ListProductItemByIdsDto): Promise<Array<ProductItem>>;
   listyByProductId(id: string): Promise<Array<ProductItem>>;
-  validateAndReserve(
-    payload: ValidateAndReserveProductItemDto,
+  reserveProductItemDuringOrderCreation(
+    payload: ReserveProductItemOrderDto,
   ): Promise<boolean>;
   finalizeOrder(data: FinalizeOrderDto): Promise<boolean>;
 }
 
 export interface IProductItemRepository
   extends IRepository<ProductItem, UpdateProductItemDto, CondProductItemDto> {
-  validateAndReserve(data: ValidateAndReserveProductItemDto): Promise<boolean>;
+  reserveProductItems(
+    productItems: ReserveProductItem[],
+    transaction: Transaction,
+  );
   finalizeOrder(data: FinalizeOrderDto): Promise<boolean>;
 }

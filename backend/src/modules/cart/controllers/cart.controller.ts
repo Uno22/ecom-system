@@ -25,7 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { ICartService } from '../cart.interface';
 
-@Controller('carts')
+@Controller({ path: 'carts', version: '1' })
 @UseGuards(RemoteAuthGuard)
 @ApiTags('Cart')
 @ApiBearerAuth()

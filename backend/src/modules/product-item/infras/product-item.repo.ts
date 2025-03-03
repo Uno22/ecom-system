@@ -1,14 +1,20 @@
 import { InjectModel } from '@nestjs/sequelize';
 import { ProductItem } from '../model/product-item.model';
 import { Injectable } from '@nestjs/common';
-import { CreateOptions, CreationAttributes, ModelStatic, Op } from 'sequelize';
+import {
+  CreateOptions,
+  CreationAttributes,
+  ModelStatic,
+  Op,
+  Transaction,
+} from 'sequelize';
 import { BaseRepository } from 'src/share/infras/base.repo';
 import {
   UpdateProductItemDto,
   CondProductItemDto,
   FinalizeOrderDto,
-  ValidateAndReserveProductItemDto,
   ProductItemAttributeDto,
+  ReserveProductItem,
 } from '../dto';
 import { IProductItemRepository } from '../product-item.interface';
 import { Sequelize } from 'sequelize-typescript';
@@ -72,51 +78,32 @@ export class ProductItemRepository
     }
   }
 
-  async validateAndReserve(
-    data: ValidateAndReserveProductItemDto,
-  ): Promise<boolean> {
-    const transaction = await this.sequelize.transaction();
-
-    try {
-      const reserveProductItems = data.items;
-
-      for (const reserveItem of reserveProductItems) {
-        const [updatedRows] = await this.productItemModel.update(
+  async reserveProductItems(
+    productItems: ReserveProductItem[],
+    transaction: Transaction,
+  ) {
+    return Promise.all(
+      productItems.map((item: ReserveProductItem) =>
+        this.productItemModel.update(
           {
-            quantity: Sequelize.literal(
-              `quantity - ${reserveItem.reserveQuantity}`,
-            ),
-            reservedQuantity: Sequelize.literal(
-              `reserved_quantity + ${reserveItem.reserveQuantity}`,
+            reservedQuantity: this.sequelize.literal(
+              `reserved_quantity + ${item.reserveQuantity}`,
             ),
           },
           {
             where: {
-              id: reserveItem.productItemId,
-              quantity: { [Op.gte]: reserveItem.reserveQuantity },
+              id: item.productItemId,
+              [Op.and]: [
+                this.sequelize.literal(
+                  `(quantity - reserved_quantity) >= ${item.reserveQuantity}`,
+                ),
+              ],
             },
             transaction,
           },
-        );
-        if (updatedRows === 0) {
-          throw new Error(
-            `found a product is not enough quantity: ${JSON.stringify(
-              reserveItem,
-            )}`,
-          );
-        }
-      }
-
-      await transaction.commit();
-      return true;
-    } catch (error) {
-      console.error(
-        '[ERROR] ********** rollback validate and reserve product',
-        error,
-      );
-      await transaction.rollback();
-      return false;
-    }
+        ),
+      ),
+    );
   }
 
   async finalizeOrder(data: FinalizeOrderDto): Promise<boolean> {
