@@ -44,7 +44,7 @@ Notes:
 
   await app.listen(process.env.PORT ?? 3000);
   console.log(
-    `Application is running on:: ${await app.getUrl()} ${process.env.NODE_ENV}`,
+    `Application is running on: ${await app.getUrl()} ${process.env.NODE_ENV}`,
   );
 }
 bootstrap();
