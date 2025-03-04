@@ -55,8 +55,4 @@ export class User extends Model<User> {
 
   @Column({ type: DataType.DATE, allowNull: true })
   declare birthday?: Date;
-
-  async comparePassword(plainPassword: string): Promise<boolean> {
-    return await bcrypt.compare(plainPassword, this.get('password'));
-  }
 }
