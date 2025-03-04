@@ -10,12 +10,7 @@ import {
   ORDER_PRODUCT_RPC,
   ORDER_REPOSITORY,
 } from './order.di-token';
-import {
-  CreateOrderDto,
-  OrderCartItemDto,
-  OrderItemDto,
-  UpdateOrderDto,
-} from './dto';
+import { CreateOrderDto, OrderItemDto, UpdateOrderDto } from './dto';
 import {
   CustomBadRequestException,
   CustomConflictException,
@@ -24,6 +19,7 @@ import {
 import { v7 } from 'uuid';
 import { generateRandomString } from 'src/share/utils';
 import { OrderStatus, PaymentStatus } from 'src/share/constants/enum';
+import { OrderItem } from './model/oder-item.model';
 
 @Injectable()
 export class OrderService implements IOrderService {
@@ -134,8 +130,16 @@ export class OrderService implements IOrderService {
     return `This action returns all order`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(id: string) {
+    const order = await this.orderRepo.get(id, {
+      raw: false,
+      include: [
+        {
+          model: OrderItem,
+        },
+      ],
+    });
+    return order;
   }
 
   update(id: number, updateOrderDto: UpdateOrderDto) {

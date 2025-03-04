@@ -34,6 +34,26 @@ export class OrderRepository implements IOrderRepository {
     }
   }
 
+  async get(id: string, options?: object): Promise<Order | null> {
+    const findOptions = { raw: true, ...options };
+    const data: any = await this.orderModel.findByPk(id, findOptions);
+    if (!data) {
+      return null;
+    }
+
+    let rawData = data;
+    if (data._previousDataValues) {
+      rawData = rawData.get({ plain: true });
+    }
+    const { created_at, updated_at, ...props } = rawData;
+
+    return {
+      ...props,
+      createdAt: rawData.created_at || rawData.createdAt,
+      updatedAt: rawData.updated_at || rawData.updatedAt,
+    } as Order;
+  }
+
   update(id: string, data: UpdateOrderDto): Promise<boolean> {
     throw new Error('Method not implemented.');
   }

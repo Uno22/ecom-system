@@ -5,6 +5,7 @@ import { ReserveProductItemDto } from '../product-item/dto';
 
 export interface IOrderRepository {
   insert(data: CreationAttributes<Order>): Promise<boolean>;
+  get(id: string, options?: object): Promise<Order | null>;
   update(id: string, data: UpdateOrderDto): Promise<boolean>;
   delete(id: string, isHardDelete: boolean): Promise<boolean>;
 }
