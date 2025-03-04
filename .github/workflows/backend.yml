@@ -41,6 +41,7 @@ jobs:
           echo "RPC_BRAND_BASE_URL=${{ secrets.RPC_BRAND_BASE_URL }}" >> .env
           echo "RPC_PRODUCT_BASE_URL=${{ secrets.RPC_PRODUCT_BASE_URL }}" >> .env
           echo "RPC_CART_BASE_URL=${{ secrets.RPC_CART_BASE_URL }}" >> .env
+          echo "MASTER_TOKEN=${{ secrets.MASTER_TOKEN }}" >> .env
           echo "copying $GITHUB_WORKSPACE/.env to EC2"
           scp -o StrictHostKeyChecking=no -i private_key.pem $GITHUB_WORKSPACE/.env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/ecom-system/backend/
           echo "completed copy"
