@@ -50,34 +50,25 @@ export class OrderService implements IOrderService {
       }
 
       const cartItems = cart.cartItems || [];
-      let filteredCartItems: OrderCartItemDto[] = [];
+      const filteredCartItems =
+        productItemIds?.length > 0
+          ? cartItems.filter((ci) => productItemIds.includes(ci.productItemId))
+          : cartItems;
 
-      if (productItemIds?.length > 0) {
-        for (const producItemId of productItemIds) {
-          const cartItem = cartItems.find(
-            (ci) => ci.productItemId === producItemId,
-          );
-          if (!cartItem) {
-            throw new CustomBadRequestException(
-              `Not found product item(${producItemId}) in cart`,
-            );
-          }
-          filteredCartItems.push(cartItem);
-        }
-      } else {
-        filteredCartItems = cartItems;
-      }
-
-      if (filteredCartItems.length === 0) {
+      if (
+        filteredCartItems.length !==
+        (productItemIds?.length || cartItems.length)
+      ) {
         throw new CustomBadRequestException(
-          'Cannot place an order with empty cart',
+          'Some product items are not in the cart',
         );
       }
 
-      const totalPrice = filteredCartItems.reduce(
+      const productTotal = filteredCartItems.reduce(
         (total, item) => total + item.quantity * item.salePrice,
-        shippingCost,
+        0,
       );
+      const totalPrice = productTotal + (shippingCost || 0);
       const orderItems: OrderItemDto[] = filteredCartItems.map((item) => ({
         ...item,
         id: v7(),
@@ -116,7 +107,6 @@ export class OrderService implements IOrderService {
         await this.orderProductRepo.reserveProduct(productItems);
 
       if (!reserveResult) {
-        await this.orderRepo.delete(newOrderId, true);
         createOrderResult = false;
         throw new CustomConflictException(
           'Failed to reserve product',
@@ -129,6 +119,10 @@ export class OrderService implements IOrderService {
 
       return newOrderId;
     } catch (error) {
+      console.error(
+        `[ERROR] ********** creating order for user ${userId}:`,
+        error,
+      );
       if (createOrderResult) {
         await this.orderRepo.delete(newOrderId, true);
       }
