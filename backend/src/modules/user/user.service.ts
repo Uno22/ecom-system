@@ -3,15 +3,20 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IUserRepository, IUserService } from './user.interface';
 import { USER_REPOSITORY } from './user.di-token';
-import { ErrDataDuplicated, ErrDataNotFound } from 'src/share/model/error';
-import { AppError } from 'src/share/app-error';
-import { UserGender, UserRole, UserStatus } from 'src/share/model/enum';
+import { UserGender, UserRole, UserStatus } from 'src/share/constants/enum';
 import { v7 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 import { User } from './model/user.model';
 import { CreationAttributes } from 'sequelize';
 import { omit } from 'lodash';
 import { CondUserDto } from './dto/cond-user.dto';
+import {
+  CustomBadRequestException,
+  DataDuplicatedException,
+  DataNotFoundException,
+} from 'src/share/exceptions';
+import { PagingDto } from 'src/share/dto';
+import { IListEntity } from 'src/share/interfaces';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -19,6 +24,14 @@ export class UserService implements IUserService {
     @Inject(USER_REPOSITORY)
     private readonly userRepo: IUserRepository,
   ) {}
+
+  findAll(cond: CondUserDto, paging: PagingDto): Promise<IListEntity<User>> {
+    throw new Error('Method not implemented.');
+  }
+
+  remove(id: string, isHardDelete: boolean): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
 
   async create(createUserDto: CreateUserDto) {
     const { email, password } = createUserDto;
@@ -28,7 +41,7 @@ export class UserService implements IUserService {
     });
 
     if (isDataExist) {
-      throw AppError.from(ErrDataDuplicated, 401);
+      throw new DataDuplicatedException();
     }
 
     const salt = bcrypt.genSaltSync(10);
@@ -48,22 +61,32 @@ export class UserService implements IUserService {
     const createdUser = await this.userRepo.insert(
       newUser as CreationAttributes<User>,
     );
-    console.log('createdUser', createdUser);
-    return omit(createdUser, ['password']);
+
+    return omit(createdUser, ['password']) as any;
   }
 
   async findOne(id: string) {
     const data = await this.userRepo.get(id);
     if (!data || data.status === UserStatus.DELETED) {
-      throw AppError.from(ErrDataNotFound, 404);
+      throw new DataNotFoundException();
     }
     return data;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto, user?: object) {
+    if (
+      updateUserDto.role &&
+      [UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(updateUserDto.role) &&
+      (user as any).role !== UserRole.SUPER_ADMIN
+    ) {
+      throw new CustomBadRequestException(
+        'You have no permission to perform on this resource.',
+      );
+    }
+
     const currentData = await this.userRepo.get(id);
     if (!currentData || currentData.status === UserStatus.DELETED) {
-      throw AppError.from(ErrDataNotFound, 404);
+      throw new DataNotFoundException();
     }
 
     return await this.userRepo.update(id, updateUserDto);

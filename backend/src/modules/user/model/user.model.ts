@@ -1,5 +1,5 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
-import { UserGender, UserRole, UserStatus } from 'src/share/model/enum';
+import { UserGender, UserRole, UserStatus } from 'src/share/constants/enum';
 import * as bcrypt from 'bcryptjs';
 
 @Table({
@@ -12,58 +12,51 @@ export class User extends Model<User> {
   declare id: string;
 
   @Column({ type: DataType.STRING, allowNull: false, field: 'first_name' })
-  firstName: string;
+  declare firstName: string;
 
   @Column({ type: DataType.STRING, allowNull: false, field: 'last_name' })
-  lastName: string;
+  declare lastName: string;
 
   @Column({ type: DataType.STRING, allowNull: false, unique: true })
-  email: string;
+  declare email: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  password: string;
+  declare password: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  phone?: string;
+  declare phone?: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  address?: string;
+  declare address?: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(UserStatus)),
     allowNull: false,
     defaultValue: UserStatus.ACTIVE,
   })
-  status: UserStatus;
+  declare status: UserStatus;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  avatar?: string;
+  declare avatar?: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(UserGender)),
     allowNull: true,
     defaultValue: UserGender.UNKNOWN,
   })
-  gender?: string;
+  declare gender?: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(UserRole)),
     allowNull: true,
     defaultValue: UserRole.USER,
   })
-  role?: string;
+  declare role?: string;
 
   @Column({ type: DataType.DATE, allowNull: true })
-  birthday?: Date;
-
-  toJSON() {
-    const values = { ...this.get() };
-    return values;
-  }
+  declare birthday?: Date;
 
   async comparePassword(plainPassword: string): Promise<boolean> {
-    console.log('plain password', plainPassword);
-    console.log('this.password', this.get('password'));
     return await bcrypt.compare(plainPassword, this.get('password'));
   }
 }

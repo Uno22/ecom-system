@@ -1,4 +1,4 @@
-import { Body, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { IAuthService } from './auth.interface';
 import { User } from '../user/model/user.model';
 import { USER_SERVICE } from '../user/user.di-token';
@@ -7,8 +7,14 @@ import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserLoginDto } from './dto/user-login.dto';
 import { LoginReponseDto } from './dto/login-response.dto';
 import { JwtService } from '@nestjs/jwt';
-import { AppError } from 'src/share/app-error';
-import { ErrInvalidEmailAndPassword } from 'src/share/model/error';
+import {
+  InvalidEmaipAndPasswordException,
+  InvalidTokenException,
+  UserNotFoundException,
+} from 'src/share/exceptions';
+import { UserInactivatedException } from 'src/share/exceptions/user-inactivated.exception';
+import { UserInactivatedStatus, UserRole } from 'src/share/constants/enum';
+import { TokenPayload } from 'src/share/interfaces';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -25,15 +31,21 @@ export class AuthService implements IAuthService {
     const { email, password } = userLoginDto;
     const user = await this.userService.findByCond({ email }, { raw: false });
     if (!user) {
-      throw AppError.from(ErrInvalidEmailAndPassword, HttpStatus.UNAUTHORIZED);
+      throw new InvalidEmaipAndPasswordException();
     }
 
     const isPasswordMatch = await user.comparePassword(password);
     if (!isPasswordMatch) {
-      throw AppError.from(ErrInvalidEmailAndPassword, HttpStatus.UNAUTHORIZED);
+      throw new InvalidEmaipAndPasswordException();
     }
 
-    const payload = { email: user.email, sub: user.id };
+    const rawUser = user.get();
+    const payload = {
+      email: rawUser.email,
+      sub: rawUser.id,
+      role: rawUser.role,
+    };
+
     return {
       accessToken: this.jwtService.sign(payload),
     };
@@ -41,5 +53,29 @@ export class AuthService implements IAuthService {
 
   logout(id: string): Promise<boolean> {
     throw new Error('Method not implemented.');
+  }
+
+  async validateToken(token: string): Promise<TokenPayload> {
+    let decodedToken;
+    try {
+      decodedToken = this.jwtService.verify(token);
+      if (!decodedToken) {
+        throw new InvalidTokenException();
+      }
+    } catch (error) {
+      console.error('[ERROR] ********** jwt verify token error:', error);
+      throw new InvalidTokenException();
+    }
+
+    const user = await this.userService.findOne(decodedToken.sub);
+    if (!user) {
+      throw new UserNotFoundException();
+    }
+
+    if (UserInactivatedStatus.includes(user.status)) {
+      throw new UserInactivatedException();
+    }
+
+    return { sub: user.id, role: user.role as UserRole };
   }
 }

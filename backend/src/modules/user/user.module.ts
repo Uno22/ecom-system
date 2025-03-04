@@ -5,6 +5,7 @@ import { USER_REPOSITORY, USER_SERVICE } from './user.di-token';
 import { UserRepository } from './infras/user.repo';
 import { User } from './model/user.model';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { SharedModule } from 'src/share/share.module';
 
 const dependencies: Provider[] = [
   { provide: USER_SERVICE, useClass: UserService },
@@ -12,7 +13,7 @@ const dependencies: Provider[] = [
 ];
 
 @Module({
-  imports: [SequelizeModule.forFeature([User])],
+  imports: [SequelizeModule.forFeature([User]), SharedModule],
   controllers: [UserController],
   providers: [...dependencies],
   exports: [USER_SERVICE],

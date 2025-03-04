@@ -2,11 +2,21 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SequelizeModule } from '@nestjs/sequelize';
-import config from 'src/share/config';
+import config from 'src/share/config/config';
 import { BrandModule } from './modules/brand/brand.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SharedModule } from './share/share.module';
+import { CategoryModule } from './modules/category/category.module';
+import { ProductModule } from './modules/product/product.module';
+import { VariantModule } from './modules/variant/variant.module';
+import { ProductItemVariantModule } from './modules/product-item-variant/product-item-variant.module';
+import { ProductItemModule } from './modules/product-item/product-item.module';
+import { CartModule } from './modules/cart/cart.module';
+import { OrderModule } from './modules/order/order.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -14,6 +24,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       load: [config],
       isGlobal: true,
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 30000,
+        limit: 10,
+      },
+    ]),
     SequelizeModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -33,11 +49,25 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         logging: console.log,
       }),
     }),
+    SharedModule,
     BrandModule,
     UserModule,
     AuthModule,
+    CategoryModule,
+    ProductModule,
+    ProductItemModule,
+    VariantModule,
+    ProductItemVariantModule,
+    CartModule,
+    OrderModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

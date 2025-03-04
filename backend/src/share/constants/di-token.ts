@@ -1,0 +1,1 @@
+export const VALIDATE_TOKEN_RPC = 'VALIDATE_TOKEN_RPC';
