@@ -13,8 +13,6 @@ import { UserDto } from '../../share/dto/user.dto';
 import { UserLoginDto } from './dto/user-login.dto';
 import { LoginReponseDto } from './dto/login-response.dto';
 import { ValidateTokenDto } from './dto';
-import { AuthGuard, Roles, RolesGuard } from 'src/share/guards';
-import { UserRole } from 'src/share/constants/enum';
 
 @ApiTags('01. Auth')
 @Controller({ path: 'auth', version: '1' })
@@ -25,8 +23,6 @@ export class AuthController {
   ) {}
 
   @Post('/register')
-  @Roles(UserRole.SUPER_ADMIN)
-  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Register a new user' })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({
