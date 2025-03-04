@@ -17,7 +17,7 @@ import {
 } from './dto';
 
 @Controller({ path: 'variants', version: '1' })
-//@UseGuards(RemoteAuthGuard)
+@UseGuards(RemoteAuthGuard)
 @ApiTags('Variant')
 @ApiBearerAuth()
 export class VariantController {

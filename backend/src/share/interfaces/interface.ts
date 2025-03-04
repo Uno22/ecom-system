@@ -13,7 +13,7 @@ export interface IService<Entity, CreateDto, UpdateDto, CondDto> {
   create(data: CreateDto): Promise<Entity | null>;
   findOne(id: string, options?: object): Promise<Entity | null>;
   findAll(cond: CondDto, paging: PagingDto): Promise<IListEntity<Entity>>;
-  update(id: string, data: UpdateDto): Promise<boolean>;
+  update(id: string, data: UpdateDto, user?: object): Promise<boolean>;
   remove(id: string, isHardDelete: boolean): Promise<boolean>;
 }
 

@@ -11,6 +11,7 @@ import { CreationAttributes } from 'sequelize';
 import { omit } from 'lodash';
 import { CondUserDto } from './dto/cond-user.dto';
 import {
+  CustomBadRequestException,
   DataDuplicatedException,
   DataNotFoundException,
 } from 'src/share/exceptions';
@@ -72,7 +73,17 @@ export class UserService implements IUserService {
     return data;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto, user?: object) {
+    if (
+      updateUserDto.role &&
+      [UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(updateUserDto.role) &&
+      (user as any).role !== UserRole.SUPER_ADMIN
+    ) {
+      throw new CustomBadRequestException(
+        'You have no permission to perform on this resource.',
+      );
+    }
+
     const currentData = await this.userRepo.get(id);
     if (!currentData || currentData.status === UserStatus.DELETED) {
       throw new DataNotFoundException();

@@ -40,7 +40,6 @@ export class BrandController {
   ) {}
 
   @Post()
-  @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Create a new brand' })
   @ApiBody({ type: CreateBrandDto })
   @ApiResponse({
@@ -53,7 +52,6 @@ export class BrandController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get all brands' })
   @ApiQuery({ name: 'page', required: false, default: 1 })
   @ApiQuery({ name: 'limit', required: false, default: 10 })
@@ -84,7 +82,6 @@ export class BrandController {
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get a brand by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiResponse({
@@ -97,7 +94,6 @@ export class BrandController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update a brand by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiBody({ type: UpdateBrandDto })

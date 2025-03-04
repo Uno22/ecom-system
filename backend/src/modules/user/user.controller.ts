@@ -6,6 +6,7 @@ import {
   Param,
   Inject,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { USER_SERVICE } from './user.di-token';
@@ -19,11 +20,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ParamIdDto } from 'src/share/dto/param.dto';
-import { AuthGuard, Roles, RolesGuard } from 'src/share/guards';
-import { UserRole } from 'src/share/constants/enum';
+import { AuthGuard } from 'src/share/guards';
 
 @Controller({ path: 'users', version: '1' })
-@UseGuards(AuthGuard, RolesGuard)
+@UseGuards(AuthGuard)
 @ApiTags('User')
 @ApiBearerAuth()
 export class UserController {
@@ -32,7 +32,6 @@ export class UserController {
   ) {}
 
   @Get(':id')
-  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get a user by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiBearerAuth()
@@ -41,7 +40,6 @@ export class UserController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update a user by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiBearerAuth()
@@ -51,7 +49,11 @@ export class UserController {
     description: 'Return true if update successfully.',
     type: Boolean,
   })
-  update(@Param() param: ParamIdDto, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(param.id, updateUserDto);
+  update(
+    @Param() param: ParamIdDto,
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req,
+  ) {
+    return this.userService.update(param.id, updateUserDto, req.user);
   }
 }

@@ -42,7 +42,6 @@ export class CategoryController {
   ) {}
 
   @Post()
-  @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Create a new category' })
   @ApiBody({ type: CreateCategoryDto })
   @ApiResponse({
@@ -55,7 +54,6 @@ export class CategoryController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get all categories' })
   @ApiQuery({ name: 'page', required: false, default: 1 })
   @ApiQuery({ name: 'limit', required: false, default: 10 })
@@ -88,7 +86,6 @@ export class CategoryController {
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get a category by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiResponse({
@@ -101,7 +98,6 @@ export class CategoryController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Update a category by id' })
   @ApiParam({ name: 'id', required: true })
   @ApiBody({ type: UpdateCategoryDto })

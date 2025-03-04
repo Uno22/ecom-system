@@ -11,6 +11,8 @@ import {
   InvalidTokenException,
   UserTokenNotFoundException,
 } from '../exceptions';
+import { UserInactivatedStatus } from '../constants/enum';
+import { UserInactivatedException } from '../exceptions/user-inactivated.exception';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -35,6 +37,10 @@ export class AuthGuard implements CanActivate {
     const user = await this.userService.findOne(decodedToken.sub);
     if (!user) {
       throw new UserTokenNotFoundException();
+    }
+
+    if (UserInactivatedStatus.includes(user.status)) {
+      throw new UserInactivatedException();
     }
 
     request.user = { sub: user.id, role: user.role };
