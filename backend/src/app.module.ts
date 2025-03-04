@@ -15,6 +15,8 @@ import { ProductItemVariantModule } from './modules/product-item-variant/product
 import { ProductItemModule } from './modules/product-item/product-item.module';
 import { CartModule } from './modules/cart/cart.module';
 import { OrderModule } from './modules/order/order.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -22,6 +24,12 @@ import { OrderModule } from './modules/order/order.module';
       load: [config],
       isGlobal: true,
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 30000,
+        limit: 10,
+      },
+    ]),
     SequelizeModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -54,6 +62,12 @@ import { OrderModule } from './modules/order/order.module';
     OrderModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
