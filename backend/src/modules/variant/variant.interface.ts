@@ -26,13 +26,4 @@ export interface IUpsertVariantResult {
 export interface IVariantService {
   createVariant(data: CreateVariantDto): Promise<Variant | null>;
   createVariantItem(data: CreateVariantItemDto): Promise<VariantItem | null>;
-  upsertVariants(
-    attributes: ProductItemAttributeDto[],
-  ): Promise<IUpsertVariantResult>;
-  updateProductVariants(
-    productId: string,
-    productItemId: string,
-    variantItemIds: Array<string>,
-  ): Promise<boolean>;
-  deleteByProductItemId(id: string, isHardDelete: boolean): Promise<boolean>;
 }
