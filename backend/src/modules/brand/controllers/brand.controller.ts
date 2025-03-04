@@ -31,7 +31,7 @@ import { UserRole } from 'src/share/constants/enum';
 
 @Controller({ path: 'brands', version: '1' })
 @UseGuards(RemoteAuthGuard, RolesGuard)
-@ApiTags('1. Brand')
+@ApiTags('08. Brand')
 @ApiBearerAuth()
 export class BrandController {
   constructor(

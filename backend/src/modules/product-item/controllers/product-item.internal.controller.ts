@@ -16,7 +16,7 @@ import { ListProductItemByIdsDto, ReserveProductItemOrderDto } from '../dto';
 
 @Controller({ path: 'internal/product-items', version: '1' })
 @UseGuards(AuthInternalGuard)
-@ApiTags('Internal Product Item')
+@ApiTags('11. Internal Product Item')
 export class ProductItemInternalController {
   constructor(
     @Inject(PRODUCT_ITEM_SERVICE)

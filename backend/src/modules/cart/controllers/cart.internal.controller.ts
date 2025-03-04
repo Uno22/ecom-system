@@ -21,7 +21,7 @@ import { ICartService } from '../cart.interface';
 
 @Controller({ path: 'internal/carts', version: '1' })
 @UseGuards(AuthInternalGuard)
-@ApiTags('Internal Cart')
+@ApiTags('10. Internal Cart')
 export class CartInternalController {
   constructor(
     @Inject(CART_SERVICE) private readonly cartService: ICartService,

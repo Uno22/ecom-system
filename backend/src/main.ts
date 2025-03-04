@@ -17,7 +17,21 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Basic E-Commerce API')
-    .setDescription('API for managing users, produce, orders, etc')
+    .setDescription(
+      `This is a basic E-Commerce API with the main functionality:
+
+- Register new user.
+
+- User login.
+- Add products to cart.
+- Place order.
+- CRUD brand/category/product.
+
+Notes:
+- Remember to add token to secure api.
+
+- Only the admin can delete resources.`,
+    )
     .addBearerAuth()
     .setVersion('1.0')
     .build();

@@ -31,7 +31,7 @@ import { RemoteAuthGuard, Roles, RolesGuard } from 'src/share/guards';
 
 @Controller({ path: 'products', version: '1' })
 @UseGuards(RemoteAuthGuard, RolesGuard)
-@ApiTags('Product')
+@ApiTags('05. Product')
 @ApiBearerAuth()
 export class ProductController {
   constructor(

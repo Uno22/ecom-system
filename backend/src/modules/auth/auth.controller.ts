@@ -16,7 +16,7 @@ import { ValidateTokenDto } from './dto';
 import { AuthGuard, Roles, RolesGuard } from 'src/share/guards';
 import { UserRole } from 'src/share/constants/enum';
 
-@ApiTags('Auth')
+@ApiTags('01. Auth')
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
   constructor(

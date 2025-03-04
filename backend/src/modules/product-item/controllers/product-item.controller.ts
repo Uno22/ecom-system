@@ -23,7 +23,7 @@ import { IProductItemService } from '../product-item.interface';
 import { RemoteAuthGuard } from 'src/share/guards';
 
 @Controller({ path: 'product-items', version: '1' })
-@ApiTags('Product Item')
+@ApiTags('06. Product Item')
 @UseGuards(RemoteAuthGuard)
 @ApiBearerAuth()
 export class ProductItemController {

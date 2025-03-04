@@ -27,7 +27,7 @@ import { ICartService } from '../cart.interface';
 
 @Controller({ path: 'carts', version: '1' })
 @UseGuards(RemoteAuthGuard)
-@ApiTags('Cart')
+@ApiTags('03. Cart')
 @ApiBearerAuth()
 export class CartController {
   constructor(

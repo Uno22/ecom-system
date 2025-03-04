@@ -8,7 +8,7 @@ import { AuthInternalGuard } from 'src/share/guards';
 
 @Controller({ path: 'internal/brands', version: '1' })
 @UseGuards(AuthInternalGuard)
-@ApiTags('Internal Brand')
+@ApiTags('12. Internal Brand')
 export class BrandInternalController {
   constructor(
     @Inject(BRAND_SERVICE)

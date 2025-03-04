@@ -24,7 +24,7 @@ import { AuthGuard } from 'src/share/guards';
 
 @Controller({ path: 'users', version: '1' })
 @UseGuards(AuthGuard)
-@ApiTags('User')
+@ApiTags('02. User')
 @ApiBearerAuth()
 export class UserController {
   constructor(

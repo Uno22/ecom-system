@@ -33,7 +33,7 @@ import { ICategoryService } from '../category.interface';
 
 @Controller({ path: 'categories', version: '1' })
 @UseGuards(RemoteAuthGuard, RolesGuard)
-@ApiTags('Category')
+@ApiTags('09. Category')
 @ApiBearerAuth()
 export class CategoryController {
   constructor(

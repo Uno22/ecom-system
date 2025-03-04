@@ -8,7 +8,7 @@ import { ICategoryService } from '../category.interface';
 
 @Controller({ path: 'internal/categories', version: '1' })
 @UseGuards(AuthInternalGuard)
-@ApiTags('Internal Category')
+@ApiTags('13. Internal Category')
 export class CategoryInternalController {
   constructor(
     @Inject(CATEGORY_SERVICE)

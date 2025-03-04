@@ -18,7 +18,7 @@ import {
 
 @Controller({ path: 'variants', version: '1' })
 @UseGuards(RemoteAuthGuard)
-@ApiTags('Variant')
+@ApiTags('07. Variant')
 @ApiBearerAuth()
 export class VariantController {
   constructor(

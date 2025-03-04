@@ -26,7 +26,7 @@ import { InvalidQueryDataException } from 'src/share/exceptions';
 
 @Controller('orders')
 @UseGuards(RemoteAuthGuard)
-@ApiTags('Order')
+@ApiTags('04. Order')
 @ApiBearerAuth()
 export class OrderController {
   constructor(
