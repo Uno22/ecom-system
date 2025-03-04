@@ -12,29 +12,24 @@ export class Product extends Model<Product> {
   declare id: string;
 
   @Column({ type: DataType.UUID, allowNull: false, field: 'category_id' })
-  categoryId: string;
+  declare categoryId: string;
 
   @Column({ type: DataType.UUID, allowNull: false, field: 'brand_id' })
-  brandId: string;
+  declare brandId: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  name: string;
+  declare name: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  description: string;
+  declare description: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(ModelStatus)),
     allowNull: false,
     defaultValue: ModelStatus.ACTIVE,
   })
-  status: ModelStatus;
+  declare status: ModelStatus;
 
   @HasMany(() => ProductItem)
   productItems?: ProductItem[];
-
-  toJSON() {
-    const values = { ...this.get() };
-    return values;
-  }
 }

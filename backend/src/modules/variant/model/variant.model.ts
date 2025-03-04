@@ -11,7 +11,7 @@ export class Variant extends Model<Variant> {
   declare id: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  name: string;
+  declare name: string;
 
   @HasMany(() => VariantItem)
   variantItems?: VariantItem[];

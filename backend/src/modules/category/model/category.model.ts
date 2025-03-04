@@ -11,29 +11,24 @@ export class Category extends Model<Category> {
   declare id: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  name: string;
+  declare name: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  image?: string;
+  declare image?: string;
 
   @Column({ type: DataType.STRING, allowNull: true, field: 'parent_id' })
-  parentId?: string;
+  declare parentId?: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  description?: string;
+  declare description?: string;
 
   @Column({ type: DataType.NUMBER, allowNull: true, defaultValue: 0 })
-  position?: number;
+  declare position?: number;
 
   @Column({
     type: DataType.ENUM(...Object.values(ModelStatus)),
     allowNull: false,
     defaultValue: ModelStatus.ACTIVE,
   })
-  status: ModelStatus;
-
-  toJSON() {
-    const values = { ...this.get() };
-    return values;
-  }
+  declare status: ModelStatus;
 }

@@ -42,12 +42,12 @@ export class OrderItem extends Model<OrderItem> {
     defaultValue: 0,
     validate: { min: 0 },
   })
-  quantity: number;
+  declare quantity: number;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
     allowNull: false,
     field: 'sale_price',
   })
-  salePrice: number;
+  declare salePrice: number;
 }

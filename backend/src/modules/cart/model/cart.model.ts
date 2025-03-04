@@ -15,12 +15,12 @@ export class Cart extends Model<Cart> {
   cartItems?: CartItem[];
 
   @Column({ type: DataType.UUID, allowNull: false, field: 'user_id' })
-  userId: string;
+  declare userId: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(ModelStatus)),
     allowNull: false,
     defaultValue: ModelStatus.ACTIVE,
   })
-  status: ModelStatus;
+  declare status: ModelStatus;
 }

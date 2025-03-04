@@ -20,18 +20,18 @@ export class VariantItem extends Model<VariantItem> {
 
   @ForeignKey(() => Variant)
   @Column({ type: DataType.UUID, allowNull: false, field: 'variant_id' })
-  variantId: string;
+  declare variantId: string;
 
   @BelongsTo(() => Variant)
   variant?: Variant;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  value: string;
+  declare value: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(ModelStatus)),
     allowNull: false,
     defaultValue: ModelStatus.ACTIVE,
   })
-  status: ModelStatus;
+  declare status: ModelStatus;
 }

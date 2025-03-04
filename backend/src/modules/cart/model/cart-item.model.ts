@@ -19,13 +19,13 @@ export class CartItem extends Model<CartItem> {
 
   @ForeignKey(() => Cart)
   @Column({ type: DataType.UUID, allowNull: false, field: 'cart_id' })
-  cartId: string;
+  declare cartId: string;
 
   @BelongsTo(() => Cart)
   cart?: Cart;
 
   @Column({ type: DataType.UUID, allowNull: false, field: 'product_item_id' })
-  productItemId: string;
+  declare productItemId: string;
 
   @Column({
     type: DataType.INTEGER,
@@ -33,5 +33,5 @@ export class CartItem extends Model<CartItem> {
     defaultValue: 0,
     validate: { min: 0 },
   })
-  quantity: number;
+  declare quantity: number;
 }

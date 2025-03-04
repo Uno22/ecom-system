@@ -22,36 +22,36 @@ export class ProductItem extends Model<ProductItem> {
 
   @ForeignKey(() => Product)
   @Column({ type: DataType.UUID, allowNull: true, field: 'product_id' })
-  productId?: string;
+  declare productId?: string;
 
   @BelongsTo(() => Product)
-  product?: Product;
+  declare product?: Product;
 
   @Column({ type: DataType.UUID, allowNull: false, field: 'category_id' })
-  categoryId: string;
+  declare categoryId: string;
 
   @Column({ type: DataType.UUID, allowNull: false, field: 'brand_id' })
-  brandId: string;
+  declare brandId: string;
 
   @HasMany(() => ProductItemVariant)
-  variantItems?: ProductItemVariant[];
+  declare variantItems?: ProductItemVariant[];
 
   @Column({ type: DataType.STRING, allowNull: false })
-  name: string;
+  declare name: string;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
     allowNull: false,
     validate: { min: 0 },
   })
-  price: number;
+  declare price: number;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
     allowNull: false,
     field: 'sale_price',
   })
-  salePrice: number;
+  declare salePrice: number;
 
   @Column({
     type: DataType.INTEGER,
@@ -59,7 +59,7 @@ export class ProductItem extends Model<ProductItem> {
     defaultValue: 0,
     validate: { min: 0 },
   })
-  quantity: number;
+  declare quantity: number;
 
   @Column({
     type: DataType.INTEGER,
@@ -68,23 +68,23 @@ export class ProductItem extends Model<ProductItem> {
     defaultValue: 0,
     validate: { min: 0 },
   })
-  reservedQuantity: number;
+  declare reservedQuantity: number;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  sku: string;
+  declare sku: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  content: string;
+  declare content: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  description: string;
+  declare description: string;
 
   @Column({
     type: DataType.FLOAT(1, 1),
     allowNull: true,
     validate: { min: 0, max: 5 },
   })
-  rating: number;
+  declare rating: number;
 
   @Column({
     type: DataType.INTEGER,
@@ -93,12 +93,12 @@ export class ProductItem extends Model<ProductItem> {
     defaultValue: 0,
     validate: { min: 0 },
   })
-  saleCount: number;
+  declare saleCount: number;
 
   @Column({
     type: DataType.ENUM(...Object.values(ModelStatus)),
     allowNull: false,
     defaultValue: ModelStatus.ACTIVE,
   })
-  status: ModelStatus;
+  declare status: ModelStatus;
 }
