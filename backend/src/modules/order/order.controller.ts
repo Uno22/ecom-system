@@ -3,16 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   Inject,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { ORDER_SERVICE } from './order.di-token';
 import { RemoteAuthGuard } from 'src/share/guards';
 import {
@@ -21,8 +18,11 @@ import {
   ApiResponse,
   ApiTags,
   ApiBearerAuth,
+  ApiQuery,
+  ApiParam,
 } from '@nestjs/swagger';
-import { OrderDto } from './dto';
+import { BrandListDto, OrderDto } from './dto';
+import { InvalidQueryDataException } from 'src/share/exceptions';
 
 @Controller('orders')
 @UseGuards(RemoteAuthGuard)
@@ -47,11 +47,40 @@ export class OrderController {
   }
 
   @Get()
-  findAll() {
-    return this.orderService.findAll();
+  @ApiOperation({ summary: 'Get all orders' })
+  @ApiQuery({ name: 'page', required: false, default: 1 })
+  @ApiQuery({ name: 'limit', required: false, default: 10 })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all orders.',
+    type: BrandListDto,
+  })
+  findAll(@Req() req) {
+    const { page, limit } = req.query;
+    const paging = {
+      page: parseInt(page as string) || 1,
+      limit: parseInt(limit as string) || 10,
+    };
+    if (
+      isNaN(paging.page) ||
+      isNaN(paging.limit) ||
+      paging.page < 1 ||
+      paging.limit < 1
+    ) {
+      throw new InvalidQueryDataException();
+    }
+
+    return this.orderService.findAll({}, paging);
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a order by id' })
+  @ApiParam({ name: 'id', required: true })
+  @ApiResponse({
+    status: 200,
+    description: 'Return a order by id.',
+    type: OrderDto,
+  })
   findOne(@Param('id') id: string) {
     return this.orderService.findOne(id);
   }

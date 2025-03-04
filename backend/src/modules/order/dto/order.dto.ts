@@ -211,3 +211,11 @@ export class OrderItemDto {
 
   order?: object;
 }
+
+export class BrandListDto {
+  @ApiProperty({ example: 10, description: 'Total number of orders' })
+  total: number;
+
+  @ApiProperty({ type: [OrderDto], description: 'List of orders' })
+  data: OrderDto[];
+}

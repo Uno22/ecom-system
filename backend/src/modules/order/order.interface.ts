@@ -1,13 +1,25 @@
 import { CreationAttributes } from 'sequelize';
-import { CreateOrderDto, OrderCartDto, UpdateOrderDto } from './dto';
+import {
+  CondOrderDto,
+  CreateOrderDto,
+  OrderCartDto,
+  UpdateOrderDto,
+} from './dto';
 import { Order } from './model/order.model';
 import { ReserveProductItemDto } from '../product-item/dto';
+import { PagingDto } from 'src/share/dto';
+import { IListEntity } from 'src/share/interfaces';
 
 export interface IOrderRepository {
   insert(data: CreationAttributes<Order>): Promise<boolean>;
   get(id: string, options?: object): Promise<Order | null>;
   update(id: string, data: UpdateOrderDto): Promise<boolean>;
   delete(id: string, isHardDelete: boolean): Promise<boolean>;
+  list(
+    cond: CondOrderDto,
+    paging: PagingDto,
+    options?: object,
+  ): Promise<IListEntity<Order>>;
 }
 
 export interface IOrderService {

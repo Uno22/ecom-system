@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CreationAttributes, ModelStatic } from 'sequelize';
+import { CreationAttributes, ModelStatic, Op } from 'sequelize';
 import { Order } from '../model/order.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { OrderItem } from '../model/oder-item.model';
 import { IOrderRepository } from '../order.interface';
-import { UpdateOrderDto } from '../dto';
+import { CondOrderDto, UpdateOrderDto } from '../dto';
 import { Sequelize } from 'sequelize-typescript';
-import { OrderStatus } from 'src/share/constants/enum';
+import { ModelStatus, OrderStatus } from 'src/share/constants/enum';
+import { PagingDto } from 'src/share/dto';
+import { IListEntity } from 'src/share/interfaces';
 
 @Injectable()
 export class OrderRepository implements IOrderRepository {
@@ -74,5 +76,43 @@ export class OrderRepository implements IOrderRepository {
       { where: { id } } as any,
     );
     return affectedRows > 0;
+  }
+
+  async list(
+    cond: CondOrderDto,
+    paging: PagingDto,
+    options?: object,
+  ): Promise<IListEntity<Order>> {
+    const { limit, page } = paging;
+    const { type, ...restOptions } = (options || {}) as any;
+    const condSQL = { ...cond, status: { [Op.ne]: ModelStatus.DELETED } };
+    const findOptions = {
+      where: condSQL,
+      ...(type !== 'all' && {
+        limit,
+        offset: (page - 1) * limit,
+      }),
+      order: [['id', 'DESC']],
+      raw: true,
+      distinct: true,
+      ...restOptions,
+    } as any;
+    const { count, rows } = await this.orderModel.findAndCountAll(findOptions);
+    let rawData = rows;
+    if (rawData.length && (rawData[0] as any)._previousDataValues) {
+      rawData = rawData.map((data) => data.get({ plain: true }));
+    }
+
+    return {
+      data: rawData.map((data: any) => {
+        const { created_at, updated_at, ...props } = data;
+        return {
+          ...props,
+          createdAt: created_at,
+          updatedAt: updated_at,
+        } as Order;
+      }),
+      total: count,
+    };
   }
 }
