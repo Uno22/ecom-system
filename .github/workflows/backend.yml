@@ -36,6 +36,11 @@ jobs:
           echo "JWT_EXPIRES_IN=${{ secrets.JWT_EXPIRES_IN }}" >> .env
           echo "ACCESS_TOKEN_SECRET_KEY=${{ secrets.ACCESS_TOKEN_SECRET_KEY }}" >> .env
           echo "ACCESS_TOKEN_EXPIRES_IN=${{ secrets.ACCESS_TOKEN_EXPIRES_IN }}" >> .env
+          echo "RPC_AUTH_BASE_URL=${{ secrets.RPC_AUTH_BASE_URL }}" >> .env
+          echo "RPC_CATEGORY_BASE_URL=${{ secrets.RPC_CATEGORY_BASE_URL }}" >> .env
+          echo "RPC_BRAND_BASE_URL=${{ secrets.RPC_BRAND_BASE_URL }}" >> .env
+          echo "RPC_PRODUCT_BASE_URL=${{ secrets.RPC_PRODUCT_BASE_URL }}" >> .env
+          echo "RPC_CART_BASE_URL=${{ secrets.RPC_CART_BASE_URL }}" >> .env
           echo "copying $GITHUB_WORKSPACE/.env to EC2"
           scp -o StrictHostKeyChecking=no -i private_key.pem $GITHUB_WORKSPACE/.env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/ecom-system/backend/
           echo "completed copy"
