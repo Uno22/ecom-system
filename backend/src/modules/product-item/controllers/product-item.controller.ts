@@ -1,19 +1,31 @@
-import { Body, Controller, Get, Inject, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiOperation,
   ApiBody,
   ApiResponse,
   ApiTags,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { CondCategoryDto } from 'src/modules/category/dto';
 import { InvalidQueryDataException } from 'src/share/exceptions';
 import { CreateProductItemDto, ProductItemDto } from '../dto';
 import { PRODUCT_ITEM_SERVICE } from '../product-item.di-token';
 import { IProductItemService } from '../product-item.interface';
+import { RemoteAuthGuard } from 'src/share/guards';
 
 @Controller({ path: 'product-items', version: '1' })
 @ApiTags('Product Item')
+@UseGuards(RemoteAuthGuard)
+@ApiBearerAuth()
 export class ProductItemController {
   constructor(
     @Inject(PRODUCT_ITEM_SERVICE)

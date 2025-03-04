@@ -6,6 +6,7 @@ import {
   CreationAttributes,
   FindOptions,
   Model,
+  Transaction,
 } from 'sequelize';
 
 export interface IService<Entity, CreateDto, UpdateDto, CondDto> {
@@ -19,7 +20,7 @@ export interface IService<Entity, CreateDto, UpdateDto, CondDto> {
 export interface ICommandRepository<Entity extends Model, UpdateDto> {
   insert(
     data: CreationAttributes<Entity>,
-    options?: CreateOptions<Entity>,
+    options?: CreateOptions<Entity> & { transaction?: Transaction },
   ): Promise<Entity | null>;
   update(id: string, data: UpdateDto): Promise<boolean>;
   delete(id: string, isHardDelete: boolean): Promise<boolean>;

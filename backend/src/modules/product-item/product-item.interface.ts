@@ -2,7 +2,6 @@ import { ProductItem } from './model/product-item.model';
 import {
   CondProductItemDto,
   CreateProductItemDto,
-  FinalizeOrderDto,
   ListProductItemByIdsDto,
   ReserveProductItem,
   ReserveProductItemOrderDto,
@@ -23,7 +22,6 @@ export interface IProductItemService
   reserveProductItemDuringOrderCreation(
     payload: ReserveProductItemOrderDto,
   ): Promise<boolean>;
-  finalizeOrder(data: FinalizeOrderDto): Promise<boolean>;
 }
 
 export interface IProductItemRepository
@@ -32,5 +30,4 @@ export interface IProductItemRepository
     productItems: ReserveProductItem[],
     transaction: Transaction,
   );
-  finalizeOrder(data: FinalizeOrderDto): Promise<boolean>;
 }

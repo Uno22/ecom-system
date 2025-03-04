@@ -21,6 +21,7 @@ import { ProductCategoryRpc } from '../product/rpc/product-category.rpc';
 import { ProductItemVariant } from '../product-item-variant/product-item-variant.model';
 import { ProductItemController } from './controllers/product-item.controller';
 import { ProductItemInternalController } from './controllers/product-item.internal.controller';
+import { SharedModule } from 'src/share/share.module';
 
 const dependencies: Provider[] = [
   { provide: PRODUCT_ITEM_SERVICE, useClass: ProductItemService },
@@ -50,6 +51,7 @@ const dependencies: Provider[] = [
   imports: [
     SequelizeModule.forFeature([ProductItem, Product, ProductItemVariant]),
     VariantModule,
+    SharedModule,
   ],
   controllers: [ProductItemController, ProductItemInternalController],
   providers: [...dependencies],

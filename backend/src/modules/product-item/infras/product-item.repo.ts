@@ -39,43 +39,33 @@ export class ProductItemRepository
 
   async insert(
     data: CreationAttributes<ProductItem>,
-    options?: CreateOptions<ProductItem>,
+    options?: CreateOptions<ProductItem> & { transaction?: Transaction },
   ): Promise<ProductItem | null> {
-    const transaction = await this.sequelize.transaction();
-    try {
-      const attributes = (data as any).attributes || [];
-      if (attributes.length > 0) {
-        const bulkProductItemVariants = attributes.map(
-          (attr: ProductItemAttributeDto) => ({
-            id: v7(),
-            productId: data.productId,
-            productItemId: data.id,
-            variantItemId: attr.variantItemId,
-            status: ModelStatus.ACTIVE,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          }),
-        );
-        await this.productItemVariantModel.bulkCreate(bulkProductItemVariants, {
-          transaction,
-        });
-      }
-
-      delete (data as any).attributes;
-      const insertedData = await this.productItemModel.create(data, {
-        raw: true,
-        ...options,
+    const { transaction } = options || {};
+    const attributes = (data as any).attributes || [];
+    if (attributes.length > 0) {
+      const bulkProductItemVariants = attributes.map(
+        (attr: ProductItemAttributeDto) => ({
+          id: v7(),
+          productId: data.productId,
+          productItemId: data.id,
+          variantItemId: attr.variantItemId,
+          status: ModelStatus.ACTIVE,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }),
+      );
+      await this.productItemVariantModel.bulkCreate(bulkProductItemVariants, {
         transaction,
       });
-
-      await transaction.commit();
-
-      return insertedData;
-    } catch (error) {
-      console.error('[ERROR] ********** product item insert error', error);
-      await transaction.rollback();
-      return null;
     }
+
+    delete (data as any).attributes;
+    return this.productItemModel.create(data, {
+      raw: true,
+      ...options,
+      transaction,
+    });
   }
 
   async reserveProductItems(
@@ -104,41 +94,5 @@ export class ProductItemRepository
         ),
       ),
     );
-  }
-
-  async finalizeOrder(data: FinalizeOrderDto): Promise<boolean> {
-    const transaction = await this.sequelize.transaction();
-    try {
-      const reserveProductItems = data.items;
-
-      for (const reserveItem of reserveProductItems) {
-        const [updatedRows] = await this.productItemModel.update(
-          {
-            reservedQuantity: Sequelize.literal(
-              `reserved_quantity - ${reserveItem.reserveQuantity}`,
-            ),
-          },
-          {
-            where: {
-              id: reserveItem.productItemId,
-              reservedQuantity: { [Op.gte]: reserveItem.reserveQuantity },
-            },
-            transaction,
-          },
-        );
-        if (updatedRows === 0) {
-          throw new Error(
-            `found invalid reserved quantity: ${JSON.stringify(reserveItem)}`,
-          );
-        }
-      }
-
-      await transaction.commit();
-      return true;
-    } catch (error) {
-      console.error('[ERROR] ********** finalize order error', error);
-      await transaction.rollback();
-      return false;
-    }
   }
 }

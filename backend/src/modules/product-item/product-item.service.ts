@@ -145,7 +145,20 @@ export class ProductItemService implements IProductItemService {
       attributes: data.attributes,
     };
 
-    return this.productItemRepo.insert(newEntity as any);
+    const transaction = await this.sequelize.transaction();
+    try {
+      const createdData = await this.productItemRepo.insert(newEntity as any, {
+        transaction,
+      });
+
+      await transaction.commit();
+
+      return createdData;
+    } catch (error) {
+      console.error('[ERROR] ********** product item create error', error);
+      await transaction.rollback();
+      return null;
+    }
   }
 
   async findOne(id: string, options?: object): Promise<ProductItem | null> {
@@ -198,6 +211,7 @@ export class ProductItemService implements IProductItemService {
   update(id: string, data: UpdateProductItemDto): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
+
   remove(id: string, isHardDelete: boolean): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
@@ -270,9 +284,5 @@ export class ProductItemService implements IProductItemService {
       await transaction.rollback();
       throw error;
     }
-  }
-
-  finalizeOrder(data: FinalizeOrderDto): Promise<boolean> {
-    throw new Error('Method not implemented.');
   }
 }
