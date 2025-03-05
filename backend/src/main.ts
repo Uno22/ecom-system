@@ -24,7 +24,7 @@ async function bootstrap() {
 
 - Register new user.
 
-- User login.
+- User login, logout, refresh token.
 - Add products to cart.
 - Place order.
 - CRUD brand/category/product.
