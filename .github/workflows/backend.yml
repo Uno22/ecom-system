@@ -36,12 +36,19 @@ jobs:
           echo "JWT_EXPIRES_IN=${{ secrets.JWT_EXPIRES_IN }}" >> .env
           echo "ACCESS_TOKEN_SECRET_KEY=${{ secrets.ACCESS_TOKEN_SECRET_KEY }}" >> .env
           echo "ACCESS_TOKEN_EXPIRES_IN=${{ secrets.ACCESS_TOKEN_EXPIRES_IN }}" >> .env
+          echo "REFRESH_TOKEN_SECRET_KEY=${{ secrets.REFRESH_TOKEN_SECRET_KEY }}" >> .env
+          echo "REFRESH_TOKEN_EXPIRES_IN=${{ secrets.REFRESH_TOKEN_EXPIRES_IN }}" >> .env
           echo "RPC_AUTH_BASE_URL=${{ secrets.RPC_AUTH_BASE_URL }}" >> .env
           echo "RPC_CATEGORY_BASE_URL=${{ secrets.RPC_CATEGORY_BASE_URL }}" >> .env
           echo "RPC_BRAND_BASE_URL=${{ secrets.RPC_BRAND_BASE_URL }}" >> .env
           echo "RPC_PRODUCT_BASE_URL=${{ secrets.RPC_PRODUCT_BASE_URL }}" >> .env
           echo "RPC_CART_BASE_URL=${{ secrets.RPC_CART_BASE_URL }}" >> .env
           echo "MASTER_TOKEN=${{ secrets.MASTER_TOKEN }}" >> .env
+          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
+          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
+          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
+          echo "REDIS_TOKEN_EXPIRES_IN=${{ secrets.REDIS_TOKEN_EXPIRES_IN }}" >> .env
+          echo "REDIS_USE_INFO_EXPIRES_IN=${{ secrets.REDIS_USE_INFO_EXPIRES_IN }}" >> .env
           echo "copying $GITHUB_WORKSPACE/.env to EC2"
           scp -o StrictHostKeyChecking=no -i private_key.pem $GITHUB_WORKSPACE/.env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/ecom-system/backend/
           echo "completed copy"
