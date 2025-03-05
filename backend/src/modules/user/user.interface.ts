@@ -7,6 +7,7 @@ import { IRepository, IService } from 'src/share/interfaces';
 export interface IUserService
   extends IService<User, CreateUserDto, UpdateUserDto, CondUserDto> {
   findByCond(cond: CondUserDto, options: object): Promise<User | null>;
+  generatePayload(user: any);
 }
 
 export interface IUserRepository

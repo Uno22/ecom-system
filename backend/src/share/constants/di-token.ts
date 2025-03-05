@@ -1,1 +1,3 @@
 export const VALIDATE_TOKEN_RPC = 'VALIDATE_TOKEN_RPC';
+export const REDIS_SERVER = 'REDIS_SERVER';
+export const JWT_SERVICE = 'JWT_SERVICE';

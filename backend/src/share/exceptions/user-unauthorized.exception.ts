@@ -2,11 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import { ApiException } from './api.exception';
 
 export class UserUnauthorizedException extends ApiException {
-  constructor() {
-    super(
-      'You must be logged in to access this resource.',
-      'UNAUTHORIZED',
-      HttpStatus.UNAUTHORIZED,
-    );
+  constructor(message = 'You must be logged in to access this resource.') {
+    super(message, 'UNAUTHORIZED', HttpStatus.UNAUTHORIZED);
   }
 }
