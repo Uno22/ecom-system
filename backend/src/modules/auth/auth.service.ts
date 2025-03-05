@@ -123,13 +123,54 @@ export class AuthService implements IAuthService {
     return userInfo;
   }
 
+  async refreshToken(token: string): Promise<LoginReponseDto> {
+    let decodedToken;
+    try {
+      decodedToken = this.jwtService.verifyRefreshToken(token);
+      if (!decodedToken) {
+        throw new InvalidTokenException();
+      }
+    } catch (error) {
+      console.error(
+        '[ERROR] ********** jwt verify refresh token error:',
+        error,
+      );
+      throw new InvalidTokenException();
+    }
+
+    const userId = decodedToken.sub;
+
+    // double check user's status and role
+    const user = await this.userService.findOne(userId);
+    console.log('decodedToken', decodedToken, user);
+    if (
+      !user ||
+      user.role !== decodedToken.role ||
+      UserInactivatedStatus.includes(user.status)
+    ) {
+      throw new UserUnauthorizedException('Invalid user, please login again.');
+    }
+
+    const payload = this.userService.generatePayload(user);
+    const accessToken = this.jwtService.generateAccessToken(payload);
+
+    await Promise.all([
+      this.redisService.setToken(userId, accessToken),
+      this.redisService.setUserInfo(userId, payload),
+    ]);
+
+    return {
+      accessToken,
+    };
+  }
+
   setRefreshTokenCookie(refreshToken: string, res: Response) {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
       maxAge: parseInt(this.jwtService.refreshTokenExpiresIn) * 1000,
-      //path: '/auth/refresh',
+      path: '/api/v1/auth/refresh',
     });
   }
 

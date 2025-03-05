@@ -10,4 +10,5 @@ export interface IAuthService {
   login(userLoginDto: UserLoginDto, res: Response): Promise<LoginReponseDto>;
   logout(userId: string, res: Response): Promise<boolean>;
   validateToken(token: string): Promise<TokenPayload>;
+  refreshToken(token: string): Promise<LoginReponseDto>;
 }

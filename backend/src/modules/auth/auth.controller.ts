@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   HttpStatus,
   Inject,
   Post,
+  Req,
   Res,
 } from '@nestjs/common';
 import {
@@ -20,7 +22,7 @@ import { UserDto } from '../../share/dto/user.dto';
 import { UserLoginDto } from './dto/user-login.dto';
 import { LoginReponseDto } from './dto/login-response.dto';
 import { UserLogoutDto, ValidateTokenDto } from './dto';
-import { ApiException, UserUnauthorizedException } from 'src/share/exceptions';
+import { ApiException } from 'src/share/exceptions';
 
 @ApiTags('01. Auth')
 @Controller({ path: 'auth', version: '1' })
@@ -98,5 +100,17 @@ export class AuthController {
   })
   validateToken(@Body() validateTokenDto: ValidateTokenDto) {
     return this.authService.validateToken(validateTokenDto.token);
+  }
+
+  @Get('refresh')
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Refresh token successfully.',
+    type: LoginReponseDto,
+  })
+  async refresh(@Req() req) {
+    const token = req.cookies['refreshToken'];
+    return this.authService.refreshToken(token);
   }
 }
