@@ -19,11 +19,28 @@ export default () => ({
       process.env.RPC_PRODUCT_BASE_URL || `http://localhost:${port}`,
     cartBaseUrl: process.env.RPC_CART_BASE_URL || `http://localhost:${port}`,
   },
-  accessToken: {
-    secretKey: process.env.ACCESS_TOKEN_SECRET_KEY || 'as8f9wfwe',
-    expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || '7d',
-  },
-  token: {
+  jwtToken: {
     masterToken: process.env.MASTER_TOKEN,
+    defaultToken: {
+      secretKey: process.env.JWT_SECRET_KEY,
+      expiresIn: `${process.env.JWT_EXPIRES_IN}s`,
+    },
+    accessToken: {
+      secretKey: process.env.ACCESS_TOKEN_SECRET_KEY,
+      expiresIn: `${process.env.ACCESS_TOKEN_EXPIRES_IN}s`,
+    },
+    refreshToken: {
+      secretKey: process.env.REFRESH_TOKEN_SECRET_KEY,
+      expiresIn: `${process.env.REFRESH_TOKEN_EXPIRES_IN}s`,
+    },
+  },
+  redis: {
+    host: process.env.REDIS_HOST || 'localhost',
+    port: process.env.REDIS_PORT || '6378',
+    password: process.env.REDIS_PASSWORD,
+    tokenExpiresIn: parseInt(process.env.REDIS_TOKEN_EXPIRES_IN as string),
+    userInfoExpiresIn: parseInt(
+      process.env.REDIS_USE_INFO_EXPIRES_IN as string,
+    ),
   },
 });

@@ -95,4 +95,13 @@ export class UserService implements IUserService {
   async findByCond(cond: CondUserDto, options: object): Promise<User | null> {
     return await this.userRepo.findByCond(cond, options);
   }
+
+  generatePayload(user: any) {
+    return {
+      email: user.email,
+      sub: user.id,
+      role: user.role,
+      status: user.status,
+    };
+  }
 }

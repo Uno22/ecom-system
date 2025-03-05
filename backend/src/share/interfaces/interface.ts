@@ -1,5 +1,5 @@
 import { PagingDto } from 'src/share/dto/paging.dto';
-import { UserRole } from '../constants/enum';
+import { UserRole, UserStatus } from '../constants/enum';
 import { Handler } from 'express';
 import {
   CreateOptions,
@@ -48,6 +48,8 @@ export interface IListEntity<Entity> {
 export interface TokenPayload {
   sub: string;
   role?: UserRole;
+  email?: string;
+  status?: UserStatus;
 }
 
 export interface ITokenProvider {

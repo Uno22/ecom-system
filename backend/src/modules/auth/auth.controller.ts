@@ -1,4 +1,11 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpStatus,
+  Inject,
+  Post,
+  Res,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiOperation,
@@ -12,7 +19,8 @@ import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserDto } from '../../share/dto/user.dto';
 import { UserLoginDto } from './dto/user-login.dto';
 import { LoginReponseDto } from './dto/login-response.dto';
-import { ValidateTokenDto } from './dto';
+import { UserLogoutDto, ValidateTokenDto } from './dto';
+import { ApiException, UserUnauthorizedException } from 'src/share/exceptions';
 
 @ApiTags('01. Auth')
 @Controller({ path: 'auth', version: '1' })
@@ -39,11 +47,45 @@ export class AuthController {
   @ApiBody({ type: UserLoginDto })
   @ApiResponse({
     status: 200,
-    description: 'User successfully created.',
+    description: 'User successfully login.',
     type: LoginReponseDto,
   })
-  login(@Body() UserLoginDto: UserLoginDto) {
-    return this.authService.login(UserLoginDto);
+  async login(@Body() userLoginDto: UserLoginDto, @Res() res) {
+    try {
+      const result = await this.authService.login(userLoginDto, res);
+      return res.status(HttpStatus.OK).json(result);
+    } catch (error) {
+      const response = (error as any).response;
+      if (error instanceof ApiException && response) {
+        return res.status(response.statusCode).json(response);
+      }
+      return res
+        .status(500)
+        .json({ message: error.message || 'Internal Server Error' });
+    }
+  }
+
+  @Post('/logout')
+  @ApiOperation({ summary: 'User logout' })
+  @ApiBody({ type: UserLogoutDto })
+  @ApiResponse({
+    status: 200,
+    description: 'User successfully logout.',
+    type: Boolean,
+  })
+  async logout(@Body() payload: UserLogoutDto, @Res() res) {
+    try {
+      const result = await this.authService.logout(payload.userId, res);
+      return res.status(HttpStatus.OK).json(result);
+    } catch (error) {
+      const response = (error as any).response;
+      if (error instanceof ApiException && response) {
+        return res.status(response.statusCode).json(response);
+      }
+      return res
+        .status(500)
+        .json({ message: error.message || 'Internal Server Error' });
+    }
   }
 
   @Post('/validate-token')
