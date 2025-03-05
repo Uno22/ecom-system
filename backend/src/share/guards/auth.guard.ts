@@ -41,7 +41,7 @@ export class AuthGuard implements CanActivate {
     const userId = decodedToken.sub;
 
     const cachedAccessToken = await this.redisService.getToken(userId);
-    if (!cachedAccessToken) {
+    if (!cachedAccessToken || cachedAccessToken !== token) {
       throw new InvalidTokenException();
     }
 
