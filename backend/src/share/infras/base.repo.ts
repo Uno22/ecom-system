@@ -19,7 +19,11 @@ export class BaseRepository<Entity extends Model, UpdateDto, CondDto>
     data: CreationAttributes<Entity>,
     options?: CreateOptions<Entity>,
   ): Promise<Entity | null> {
-    return this.model.create(data, { raw: true, ...options });
+    const createdData = await this.model.create(data, {
+      raw: true,
+      ...options,
+    });
+    return createdData.get({ plain: true });
   }
 
   async update(id: string, data: UpdateDto): Promise<boolean> {

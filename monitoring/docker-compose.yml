@@ -40,5 +40,19 @@ services:
     networks:
       - monitor_network
 
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=
+    command: ["redis-server", "--requirepass", ""]
+    networks:
+      - redis_network
+
 networks:
   monitor_network:
+  redis_network:
+    driver: bridge

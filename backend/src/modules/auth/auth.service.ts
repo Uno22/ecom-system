@@ -15,6 +15,7 @@ import {
 import { UserInactivatedException } from 'src/share/exceptions/user-inactivated.exception';
 import { UserInactivatedStatus, UserRole } from 'src/share/constants/enum';
 import { TokenPayload } from 'src/share/interfaces';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -34,16 +35,15 @@ export class AuthService implements IAuthService {
       throw new InvalidEmaipAndPasswordException();
     }
 
-    const isPasswordMatch = await user.comparePassword(password);
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       throw new InvalidEmaipAndPasswordException();
     }
 
-    const rawUser = user.get();
     const payload = {
-      email: rawUser.email,
-      sub: rawUser.id,
-      role: rawUser.role,
+      email: user.email,
+      sub: user.id,
+      role: user.role,
     };
 
     return {
