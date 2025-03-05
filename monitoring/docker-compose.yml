@@ -41,11 +41,14 @@ services:
       - monitor_network
 
   redis:
-    image: redis:alpine # Lightweight Redis version
-    container_name: redis_server
+    image: redis:alpine
+    container_name: redis
     restart: always
     ports:
-      - "6379:6379"
+      - "6378:6379"
+    environment:
+      - REDIS_PASSWORD=
+    command: ["redis-server", "--requirepass", ""]
     networks:
       - redis_network
 
