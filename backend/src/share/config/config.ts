@@ -43,4 +43,10 @@ export default () => ({
       process.env.REDIS_USE_INFO_EXPIRES_IN as string,
     ),
   },
+  kafka: {
+    enabled: process.env.KAFKA_ENABLED === 'true',
+    broker: process.env.KAFKA_BROKER || 'localhost:9092',
+    username: process.env.KAFKA_USERNAME || '',
+    password: process.env.KAFKA_PASSWORD || '',
+  },
 });
