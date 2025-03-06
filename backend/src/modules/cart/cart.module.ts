@@ -25,7 +25,10 @@ const dependencies: Provider[] = [
     provide: CART_PRODUCT_RPC,
     useFactory: (configService: ConfigService) => {
       const url = configService.get<string>('rpc.productBaseUrl', '');
-      const token: string = configService.get<string>('token.masterToken', '');
+      const token: string = configService.get<string>(
+        'jwtToken.masterToken',
+        '',
+      );
       return new CartProductRpc(url, token);
     },
     inject: [ConfigService],

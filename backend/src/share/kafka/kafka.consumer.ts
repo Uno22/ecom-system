@@ -1,5 +1,5 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
-import { Kafka, Consumer } from 'kafkajs';
+import { Kafka, Consumer, EachMessagePayload } from 'kafkajs';
 
 @Injectable()
 export class KafkaConsumer implements OnModuleDestroy {
@@ -42,8 +42,29 @@ export class KafkaConsumer implements OnModuleDestroy {
     await consumer.subscribe({ topic, fromBeginning: true });
 
     await consumer.run({
-      eachMessage: async ({ message }) => {
-        callback(message);
+      eachMessage: async ({
+        topic,
+        partition,
+        message,
+      }: EachMessagePayload) => {
+        let msg;
+
+        try {
+          msg = JSON.parse(message.value?.toString() || '{}');
+        } catch (error) {
+          console.error(
+            '[ERROR] ******* consumer parse message to json failed',
+            error,
+          );
+          msg = message.value?.toString();
+        }
+
+        console.log(
+          `${this.name} received message on topic(${topic}) partition(${partition}) offset(${message?.offset})`,
+          'message:',
+          msg,
+        );
+        callback(msg);
       },
     });
 

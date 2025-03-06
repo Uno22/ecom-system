@@ -3,6 +3,7 @@ import {
   CondOrderDto,
   CreateOrderDto,
   OrderCartDto,
+  ResponseCreateOrderDto,
   UpdateOrderDto,
 } from './dto';
 import { Order } from './model/order.model';
@@ -23,7 +24,10 @@ export interface IOrderRepository {
 }
 
 export interface IOrderService {
-  create(userId: string, createOrderDto: CreateOrderDto): Promise<string>;
+  create(
+    userId: string,
+    createOrderDto: CreateOrderDto,
+  ): Promise<ResponseCreateOrderDto>;
 }
 
 export interface IOrderCartRpc {

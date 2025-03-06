@@ -10,7 +10,7 @@ export class AuthInternalGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = request.headers.authorization;
 
-    if (token !== this.config.get<string>('token.masterToken')) {
+    if (token !== this.config.get<string>('jwtToken.masterToken')) {
       throw new InternalUnauthorizedException();
     }
 

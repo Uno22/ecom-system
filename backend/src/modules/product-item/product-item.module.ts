@@ -31,7 +31,10 @@ const dependencies: Provider[] = [
     provide: PRODUCT_BRAND_RPC,
     useFactory: (configService: ConfigService) => {
       const url = configService.get<string>('rpc.brandBaseUrl', '');
-      const token: string = configService.get<string>('token.masterToken', '');
+      const token: string = configService.get<string>(
+        'jwtToken.masterToken',
+        '',
+      );
       return new ProductBrandRpc(url, token);
     },
     inject: [ConfigService],
@@ -40,7 +43,10 @@ const dependencies: Provider[] = [
     provide: PRODUCT_CATEGORY_RPC,
     useFactory: (configService: ConfigService) => {
       const url = configService.get<string>('rpc.categoryBaseUrl', '');
-      const token: string = configService.get<string>('token.masterToken', '');
+      const token: string = configService.get<string>(
+        'jwtToken.masterToken',
+        '',
+      );
       return new ProductCategoryRpc(url, token);
     },
     inject: [ConfigService],

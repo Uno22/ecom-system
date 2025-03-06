@@ -7,6 +7,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   private client: Redis;
   private tokenExpiresIn;
   private userInfoExpiresIn;
+  private orderExpiresIn;
 
   constructor(private readonly configService: ConfigService) {
     this.client = new Redis({
@@ -23,6 +24,9 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     );
     this.userInfoExpiresIn = this.configService.get<number>(
       'redis.userInfoExpiresIn',
+    );
+    this.orderExpiresIn = this.configService.get<number>(
+      'redis.orderExpiresIn',
     );
   }
 
@@ -62,6 +66,10 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     return `user:${userId}`;
   }
 
+  getOrderKey(orderId: string) {
+    return `order:${orderId}`;
+  }
+
   async setToken(userId: string, token: string) {
     return this.set(this.getTokenKey(userId), token, this.tokenExpiresIn);
   }
@@ -88,5 +96,17 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   async deleteUserInfo(userId: string) {
     return this.del(this.getUserInfoKey(userId));
+  }
+
+  async setOrder(orderId: string, payload: any) {
+    return this.set(
+      this.getOrderKey(orderId),
+      JSON.stringify(payload),
+      this.orderExpiresIn,
+    );
+  }
+
+  async getOrder(orderId: string) {
+    return this.get(this.getOrderKey(orderId));
   }
 }

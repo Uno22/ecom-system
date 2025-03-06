@@ -42,6 +42,7 @@ export default () => ({
     userInfoExpiresIn: parseInt(
       process.env.REDIS_USE_INFO_EXPIRES_IN as string,
     ),
+    orderExpiresIn: parseInt(process.env.REDIS_ORDER_EXPIRES_IN as string),
   },
   kafka: {
     enabled: process.env.KAFKA_ENABLED === 'true',

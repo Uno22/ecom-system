@@ -7,6 +7,7 @@ import {
 } from './order.interface';
 import {
   ORDER_CART_RPC,
+  ORDER_PRODUCER,
   ORDER_PRODUCT_RPC,
   ORDER_REPOSITORY,
 } from './order.di-token';
@@ -14,6 +15,7 @@ import {
   CondOrderDto,
   CreateOrderDto,
   OrderItemDto,
+  ResponseCreateOrderDto,
   UpdateOrderDto,
 } from './dto';
 import {
@@ -26,6 +28,9 @@ import { generateRandomString } from 'src/share/utils';
 import { OrderStatus, PaymentStatus } from 'src/share/constants/enum';
 import { OrderItem } from './model/oder-item.model';
 import { PagingDto } from 'src/share/dto';
+import { OrderProducer } from './kafka/order.producer';
+import { RedisService } from 'src/share/cache/redis.service';
+import { REDIS_SERVER } from 'src/share/constants/di-token';
 
 @Injectable()
 export class OrderService implements IOrderService {
@@ -34,29 +39,29 @@ export class OrderService implements IOrderService {
     @Inject(ORDER_CART_RPC) private readonly orderCartRepo: IOrderCartRpc,
     @Inject(ORDER_PRODUCT_RPC)
     private readonly orderProductRepo: IOrderProductRpc,
+    @Inject(ORDER_PRODUCER)
+    private readonly orderProducer: OrderProducer,
+    @Inject(REDIS_SERVER) private readonly redisService: RedisService,
   ) {}
 
-  async create(
+  async createOldVersion(
     userId: string,
     createOrderDto: CreateOrderDto,
   ): Promise<string> {
-    const { productItemIds, shippingCost } = createOrderDto;
+    const { shippingCost } = createOrderDto;
+    const productItemIds: any = [];
     const newOrderId = v7();
     let createOrderResult = false;
-
     try {
       const cart = await this.orderCartRepo.getCartByUserId(userId);
-
       if (!cart) {
         throw new CustomNotFoundException('Cart not found');
       }
-
       const cartItems = cart.cartItems || [];
       const filteredCartItems =
         productItemIds?.length > 0
           ? cartItems.filter((ci) => productItemIds.includes(ci.productItemId))
           : cartItems;
-
       if (
         filteredCartItems.length !==
         (productItemIds?.length || cartItems.length)
@@ -130,6 +135,33 @@ export class OrderService implements IOrderService {
       }
       throw error;
     }
+  }
+
+  async create(
+    userId: string,
+    createOrderDto: CreateOrderDto,
+  ): Promise<ResponseCreateOrderDto> {
+    const orderId = v7();
+    const shortMessage = {
+      userId,
+      orderId,
+      status: OrderStatus.PENDING,
+      productItems: createOrderDto.productItems,
+    };
+    const fullMessage = {
+      ...createOrderDto,
+      ...shortMessage,
+    };
+
+    await this.redisService.setOrder(orderId, shortMessage);
+
+    await this.orderProducer.sendMessage(fullMessage);
+
+    return {
+      orderId,
+      status: OrderStatus.PENDING,
+      message: 'received request order',
+    };
   }
 
   async findAll(cond: CondOrderDto, paging: PagingDto) {

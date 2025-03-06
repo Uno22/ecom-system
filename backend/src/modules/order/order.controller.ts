@@ -25,7 +25,7 @@ import { BrandListDto, OrderDto } from './dto';
 import { InvalidQueryDataException } from 'src/share/exceptions';
 
 @Controller('orders')
-@UseGuards(RemoteAuthGuard)
+//@UseGuards(RemoteAuthGuard)
 @ApiTags('04. Order')
 @ApiBearerAuth()
 export class OrderController {
@@ -42,8 +42,11 @@ export class OrderController {
     type: OrderDto,
   })
   create(@Body() createOrderDto: CreateOrderDto, @Req() req) {
-    const { sub: userId } = req.user;
-    return this.orderService.create(userId, createOrderDto);
+    //const { sub: userId } = req.user;
+    return this.orderService.create(
+      '01954109-f138-7538-b3ca-7dc720ea8f83',
+      createOrderDto,
+    );
   }
 
   @Get()
