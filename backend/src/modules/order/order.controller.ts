@@ -23,14 +23,15 @@ import {
 } from '@nestjs/swagger';
 import { BrandListDto, OrderDto } from './dto';
 import { InvalidQueryDataException } from 'src/share/exceptions';
+import { IOrderService } from './order.interface';
 
 @Controller('orders')
-//@UseGuards(RemoteAuthGuard)
+@UseGuards(RemoteAuthGuard)
 @ApiTags('04. Order')
 @ApiBearerAuth()
 export class OrderController {
   constructor(
-    @Inject(ORDER_SERVICE) private readonly orderService: OrderService,
+    @Inject(ORDER_SERVICE) private readonly orderService: IOrderService,
   ) {}
 
   @Post()
@@ -42,11 +43,8 @@ export class OrderController {
     type: OrderDto,
   })
   create(@Body() createOrderDto: CreateOrderDto, @Req() req) {
-    //const { sub: userId } = req.user;
-    return this.orderService.create(
-      '01954109-f138-7538-b3ca-7dc720ea8f83',
-      createOrderDto,
-    );
+    const { sub: userId } = req.user;
+    return this.orderService.create(userId, createOrderDto);
   }
 
   @Get()
@@ -74,6 +72,17 @@ export class OrderController {
     }
 
     return this.orderService.findAll({}, paging);
+  }
+
+  @Get(':id/status')
+  @ApiOperation({ summary: 'Get order status by id' })
+  @ApiParam({ name: 'id', required: true })
+  @ApiResponse({
+    status: 200,
+    description: 'Return order status by id.',
+  })
+  findStatus(@Param('id') id: string) {
+    return this.orderService.findStatus(id);
   }
 
   @Get(':id')

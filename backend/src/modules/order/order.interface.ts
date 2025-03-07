@@ -28,6 +28,9 @@ export interface IOrderService {
     userId: string,
     createOrderDto: CreateOrderDto,
   ): Promise<ResponseCreateOrderDto>;
+  findAll(cond: CondOrderDto, paging: PagingDto);
+  findOne(id: string): Promise<Order | null>;
+  findStatus(id: string);
 }
 
 export interface IOrderCartRpc {

@@ -23,6 +23,7 @@ import {
   CustomBadRequestException,
   CustomConflictException,
   CustomNotFoundException,
+  DataNotFoundException,
 } from 'src/share/exceptions';
 import { v7 } from 'uuid';
 import { generateRandomString } from 'src/share/utils';
@@ -35,6 +36,7 @@ import { REDIS_SERVER } from 'src/share/constants/di-token';
 import { OrderConsumer } from './kafka/order.consumer';
 import { IOrderMessage } from 'src/share/interfaces';
 import { KafkaConsumerConfig } from 'src/share/kafka/kafka.constants';
+import { Order } from './model/order.model';
 
 @Injectable()
 export class OrderService implements IOrderService, OnModuleInit {
@@ -208,7 +210,7 @@ export class OrderService implements IOrderService, OnModuleInit {
     });
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<Order | null> {
     const order = await this.orderRepo.get(id, {
       raw: false,
       include: [
@@ -218,6 +220,38 @@ export class OrderService implements IOrderService, OnModuleInit {
       ],
     });
     return order;
+  }
+
+  async findStatus(id: string) {
+    const orderInCache = await this.redisService.getOrder(id);
+    let orderObj;
+
+    try {
+      orderObj = orderInCache ? JSON.parse(orderInCache) : null;
+    } catch (error) {}
+
+    if (!orderObj) {
+      const orderInDB = await this.orderRepo.get(id);
+      if (orderInDB) {
+        orderObj = orderInDB;
+        await this.redisService.setOrder(id, {
+          orderId: id,
+          userId: orderInDB.userId,
+          status: orderInDB.status,
+        });
+      }
+    }
+
+    if (!orderObj) {
+      throw new DataNotFoundException('Order not found');
+    }
+
+    return {
+      orderId: id,
+      userId: orderObj.userId,
+      status: orderObj.status,
+      message: orderObj.message || '',
+    };
   }
 
   update(id: number, updateOrderDto: UpdateOrderDto) {
