@@ -1,6 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import {
+  CART_CONSUMER,
   CART_ITEM_REPOSITORY,
+  CART_PRODUCER,
   CART_PRODUCT_RPC,
   CART_REPOSITORY,
 } from './cart.di-token';
@@ -28,16 +30,34 @@ import {
 } from 'src/share/exceptions';
 import { CartItem } from './model/cart-item.model';
 import { CartProductDto } from './dto/cart-product.dto';
+import { CartProducer } from './kafka/cart.producer';
+import { CartConsumer } from './kafka/cart.consumer';
+import { IOrderMessage } from 'src/share/interfaces';
+import { KafkaConsumerConfig } from 'src/share/kafka/kafka.constants';
 
 @Injectable()
-export class CartService implements ICartService {
+export class CartService implements ICartService, OnModuleInit {
   constructor(
     @Inject(CART_REPOSITORY) private readonly cartRepo: ICartRepository,
     @Inject(CART_ITEM_REPOSITORY)
     private readonly cartItemRepo: ICartItemRepository,
     @Inject(CART_PRODUCT_RPC)
     private readonly cartProductRepo: ICartProductRpc,
+    @Inject(CART_PRODUCER)
+    private readonly cartProducer: CartProducer,
+    @Inject(CART_CONSUMER)
+    private readonly cartConsumer: CartConsumer,
   ) {}
+
+  async onModuleInit() {
+    await this.cartConsumer.init([
+      {
+        groupId: KafkaConsumerConfig.cart.verifyCart.groupId,
+        topic: KafkaConsumerConfig.cart.verifyCart.topic,
+        cb: this.handleVerifyCart.bind(this),
+      },
+    ]);
+  }
 
   async getActiveCart(userId: string): Promise<CartDto | null> {
     const activeCart = await this.cartRepo.findByCond(
@@ -246,5 +266,11 @@ export class CartService implements ICartService {
     deleteCartItemDto: DeleteCartItemDto,
   ): Promise<boolean> {
     return this.cartItemRepo.deleteCartItemByIds(deleteCartItemDto.ids);
+  }
+
+  async handleVerifyCart(message: IOrderMessage) {
+    console.log('handleVerifyCart msg', message);
+    await this.cartProducer.verifiedCart(message);
+    //await this.cartProducer.verifyCartFailed(message);
   }
 }

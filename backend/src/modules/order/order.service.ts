@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import {
   IOrderCartRpc,
   IOrderProductRpc,
@@ -7,6 +7,7 @@ import {
 } from './order.interface';
 import {
   ORDER_CART_RPC,
+  ORDER_CONSUMER,
   ORDER_PRODUCER,
   ORDER_PRODUCT_RPC,
   ORDER_REPOSITORY,
@@ -31,9 +32,12 @@ import { PagingDto } from 'src/share/dto';
 import { OrderProducer } from './kafka/order.producer';
 import { RedisService } from 'src/share/cache/redis.service';
 import { REDIS_SERVER } from 'src/share/constants/di-token';
+import { OrderConsumer } from './kafka/order.consumer';
+import { IOrderMessage } from 'src/share/interfaces';
+import { KafkaConsumerConfig } from 'src/share/kafka/kafka.constants';
 
 @Injectable()
-export class OrderService implements IOrderService {
+export class OrderService implements IOrderService, OnModuleInit {
   constructor(
     @Inject(ORDER_REPOSITORY) private readonly orderRepo: IOrderRepository,
     @Inject(ORDER_CART_RPC) private readonly orderCartRepo: IOrderCartRpc,
@@ -41,8 +45,41 @@ export class OrderService implements IOrderService {
     private readonly orderProductRepo: IOrderProductRpc,
     @Inject(ORDER_PRODUCER)
     private readonly orderProducer: OrderProducer,
+    @Inject(ORDER_CONSUMER)
+    private readonly orderConsumer: OrderConsumer,
     @Inject(REDIS_SERVER) private readonly redisService: RedisService,
   ) {}
+
+  async onModuleInit() {
+    const {
+      createOrder,
+      confirmOrder,
+      updateOrderFailed,
+      orderCreationFailed,
+    } = KafkaConsumerConfig.order;
+    await this.orderConsumer.init([
+      {
+        groupId: createOrder.groupId,
+        topic: createOrder.topic,
+        cb: this.handleCreateOrder.bind(this),
+      },
+      {
+        groupId: confirmOrder.groupId,
+        topic: confirmOrder.topic,
+        cb: this.handleConfirmOrder.bind(this),
+      },
+      {
+        groupId: updateOrderFailed.groupId,
+        topic: updateOrderFailed.topic,
+        cb: this.handleUpdateOrderWhileProductDeductFailed.bind(this),
+      },
+      {
+        groupId: orderCreationFailed.groupId,
+        topic: orderCreationFailed.topic,
+        cb: this.handleOrderCreationFailed.bind(this),
+      },
+    ]);
+  }
 
   async createOldVersion(
     userId: string,
@@ -155,7 +192,7 @@ export class OrderService implements IOrderService {
 
     await this.redisService.setOrder(orderId, shortMessage);
 
-    await this.orderProducer.sendMessage(fullMessage);
+    await this.orderProducer.startedOrder(fullMessage);
 
     return {
       orderId,
@@ -193,5 +230,23 @@ export class OrderService implements IOrderService {
 
   remove(id: number) {
     return `This action removes a #${id} order`;
+  }
+
+  async handleCreateOrder(message: IOrderMessage) {
+    console.log('handleCreateOrder msg', message);
+    await this.orderProducer.createdOrder(message);
+    // await this.orderProducer.createOrderFailed(message);
+  }
+
+  async handleConfirmOrder(message: IOrderMessage) {
+    console.log('handleConfirmOrder msg', message);
+  }
+
+  async handleUpdateOrderWhileProductDeductFailed(message: IOrderMessage) {
+    console.log('handleUpdateOrderWhileProductDeductFailed msg', message);
+  }
+
+  async handleOrderCreationFailed(message: IOrderMessage) {
+    console.log('handleOrderCreationFailed msg', message);
   }
 }

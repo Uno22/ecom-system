@@ -1,12 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { KAFKA_ORDER_CONSUMER } from 'src/share/kafka/kafka.constants';
+import { KAFKA_PRODUCT_CONSUMER } from 'src/share/kafka/kafka.constants';
 import { KafkaConsumer } from 'src/share/kafka/kafka.consumer';
 import { KafkaConsumerCallback } from 'src/share/kafka/kafka.interface';
 
 @Injectable()
-export class OrderConsumer {
+export class ProductConsumer {
   constructor(
-    @Inject(KAFKA_ORDER_CONSUMER) private readonly kafkaConsumer: KafkaConsumer,
+    @Inject(KAFKA_PRODUCT_CONSUMER)
+    private readonly kafkaConsumer: KafkaConsumer,
   ) {}
 
   async init(configs: KafkaConsumerCallback[] = []) {

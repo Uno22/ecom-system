@@ -43,7 +43,7 @@ export class KafkaProducer implements OnModuleInit, OnModuleDestroy {
     if (!this.enabled) {
       return;
     }
-    console.log(`${this.name} is sending message`, messages);
+    console.log(`${this.name} is sending message on topic(${topic})`, messages);
     const result = await this.producer.send({ topic, messages });
     console.log(`${this.name} sent result:`, result);
 

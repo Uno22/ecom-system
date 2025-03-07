@@ -2,7 +2,9 @@ import { Module, Provider } from '@nestjs/common';
 import { CartController } from './controllers/cart.controller';
 import { CartService } from './cart.service';
 import {
+  CART_CONSUMER,
   CART_ITEM_REPOSITORY,
+  CART_PRODUCER,
   CART_PRODUCT_RPC,
   CART_REPOSITORY,
   CART_SERVICE,
@@ -16,6 +18,8 @@ import { CartProductRpc } from './rpc/cart-product.rpc';
 import { ConfigService } from '@nestjs/config';
 import { SharedModule } from 'src/share/share.module';
 import { CartInternalController } from './controllers/cart.internal.controller';
+import { CartProducer } from './kafka/cart.producer';
+import { CartConsumer } from './kafka/cart.consumer';
 
 const dependencies: Provider[] = [
   { provide: CART_SERVICE, useClass: CartService },
@@ -32,6 +36,14 @@ const dependencies: Provider[] = [
       return new CartProductRpc(url, token);
     },
     inject: [ConfigService],
+  },
+  {
+    provide: CART_PRODUCER,
+    useClass: CartProducer,
+  },
+  {
+    provide: CART_CONSUMER,
+    useClass: CartConsumer,
   },
 ];
 

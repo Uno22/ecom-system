@@ -1,12 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import {
   IProductItemRepository,
   IProductItemService,
 } from './product-item.interface';
 import { PagingDto } from 'src/share/dto';
-import { IListEntity } from 'src/share/interfaces';
+import { IListEntity, IOrderMessage } from 'src/share/interfaces';
 import {
-  FinalizeOrderDto,
   CreateProductItemDto,
   CondProductItemDto,
   UpdateProductItemDto,
@@ -18,6 +17,8 @@ import { PRODUCT_ITEM_REPOSITORY } from './product-item.di-token';
 import {
   PRODUCT_BRAND_RPC,
   PRODUCT_CATEGORY_RPC,
+  PRODUCT_CONSUMER,
+  PRODUCT_PRODUCER,
   PRODUCT_REPOSITORY,
 } from '../product/product.di-token';
 import {
@@ -46,9 +47,15 @@ import { AttributeDuplicatedException } from 'src/share/exceptions/attribute-dup
 import { v7 } from 'uuid';
 import { ModelStatus } from 'src/share/constants/enum';
 import { Sequelize } from 'sequelize-typescript';
+import { ProductProducer } from '../product/kafka/product.producer';
+import { ProductConsumer } from '../product/kafka/product.consumer';
+import {
+  KAFKA_TOPIC,
+  KafkaConsumerConfig,
+} from 'src/share/kafka/kafka.constants';
 
 @Injectable()
-export class ProductItemService implements IProductItemService {
+export class ProductItemService implements IProductItemService, OnModuleInit {
   constructor(
     @Inject(PRODUCT_ITEM_REPOSITORY)
     private readonly productItemRepo: IProductItemRepository,
@@ -60,8 +67,34 @@ export class ProductItemService implements IProductItemService {
     private readonly productBrandRepo: IProductBrandRpc,
     @Inject(PRODUCT_CATEGORY_RPC)
     private readonly productCategoryRepo: IProductCategoryRpc,
+    @Inject(PRODUCT_PRODUCER)
+    private readonly productProducer: ProductProducer,
+    @Inject(PRODUCT_CONSUMER)
+    private readonly productConsumer: ProductConsumer,
     private readonly sequelize: Sequelize,
   ) {}
+
+  async onModuleInit() {
+    const { reserveProduct, deductProduct, releaseProduct } =
+      KafkaConsumerConfig.product;
+    await this.productConsumer.init([
+      {
+        groupId: reserveProduct.groupId,
+        topic: reserveProduct.topic,
+        cb: this.handleReserveProduct.bind(this),
+      },
+      {
+        groupId: deductProduct.groupId,
+        topic: deductProduct.topic,
+        cb: this.handleDeductProduct.bind(this),
+      },
+      {
+        groupId: releaseProduct.groupId,
+        topic: releaseProduct.topic,
+        cb: this.handleReleaseProduct.bind(this),
+      },
+    ]);
+  }
 
   async create(data: CreateProductItemDto): Promise<ProductItem | null> {
     const { productId, sku } = data;
@@ -284,5 +317,28 @@ export class ProductItemService implements IProductItemService {
       await transaction.rollback();
       throw error;
     }
+  }
+
+  async handleReserveProduct(message: IOrderMessage) {
+    console.log('handleReserveProduct msg', message);
+    await this.productProducer.reservedProduct(message);
+    // await this.productProducer.reserveProductFailed(message);
+  }
+
+  async handleReleaseProduct(message: IOrderMessage) {
+    console.log('handleReleaseProduct msg', message);
+    //this.releaseProduct(message);
+  }
+
+  async handleDeductProduct(message: IOrderMessage) {
+    console.log('handleDeductProduct msg', message);
+    await this.productProducer.deductedProduct(message);
+
+    // await this.productProducer.deducteProductFailed(message);
+    // this.releaseProduct(message);
+  }
+
+  releaseProduct(message: IOrderMessage) {
+    console.log('releaseProduct', message);
   }
 }

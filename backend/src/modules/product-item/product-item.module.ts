@@ -11,6 +11,8 @@ import { ProductRepository } from '../product/infras/product.repo';
 import {
   PRODUCT_BRAND_RPC,
   PRODUCT_CATEGORY_RPC,
+  PRODUCT_CONSUMER,
+  PRODUCT_PRODUCER,
   PRODUCT_REPOSITORY,
 } from '../product/product.di-token';
 import { Product } from '../product/model/product.model';
@@ -22,6 +24,8 @@ import { ProductItemVariant } from '../product-item-variant/product-item-variant
 import { ProductItemController } from './controllers/product-item.controller';
 import { ProductItemInternalController } from './controllers/product-item.internal.controller';
 import { SharedModule } from 'src/share/share.module';
+import { ProductProducer } from '../product/kafka/product.producer';
+import { ProductConsumer } from '../product/kafka/product.consumer';
 
 const dependencies: Provider[] = [
   { provide: PRODUCT_ITEM_SERVICE, useClass: ProductItemService },
@@ -50,6 +54,14 @@ const dependencies: Provider[] = [
       return new ProductCategoryRpc(url, token);
     },
     inject: [ConfigService],
+  },
+  {
+    provide: PRODUCT_PRODUCER,
+    useClass: ProductProducer,
+  },
+  {
+    provide: PRODUCT_CONSUMER,
+    useClass: ProductConsumer,
   },
 ];
 

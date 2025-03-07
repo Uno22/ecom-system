@@ -36,7 +36,7 @@ export class KafkaConsumer implements OnModuleDestroy {
     if (!this.enabled) {
       return;
     }
-    console.log(`${this.name} is initializing`);
+    console.log(`${this.name} is connecting topic(${topic})`);
     const consumer = this.kafka.consumer({ groupId });
     await consumer.connect();
     await consumer.subscribe({ topic, fromBeginning: true });
@@ -69,7 +69,7 @@ export class KafkaConsumer implements OnModuleDestroy {
     });
 
     this.consumers.push(consumer);
-    console.log(`${this.name} initialized`);
+    console.log(`${this.name} connected topic(${topic})`);
   }
 
   async onModuleDestroy() {

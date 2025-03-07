@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
-  KAFKA_ORDER_PRODUCER,
+  KAFKA_CART_PRODUCER,
   KAFKA_TOPIC,
 } from 'src/share/kafka/kafka.constants';
 import { KafkaProducer } from 'src/share/kafka/kafka.producer';
 import { IOrderMessage } from 'src/share/interfaces';
 
 @Injectable()
-export class OrderProducer {
+export class CartProducer {
   constructor(
-    @Inject(KAFKA_ORDER_PRODUCER) private readonly kafkaProducer: KafkaProducer,
+    @Inject(KAFKA_CART_PRODUCER) private readonly kafkaProducer: KafkaProducer,
   ) {}
 
   async sendMessage(topic: string, msg: IOrderMessage) {
@@ -22,15 +22,11 @@ export class OrderProducer {
     await this.kafkaProducer.deteleRecords(topic, offset);
   }
 
-  async startedOrder(msg: IOrderMessage) {
-    return await this.sendMessage(KAFKA_TOPIC.ORDER_STARTED, msg);
+  async verifiedCart(msg: IOrderMessage) {
+    return await this.sendMessage(KAFKA_TOPIC.ORDER_CART_VERIFIED, msg);
   }
 
-  async createdOrder(msg: IOrderMessage) {
-    return await this.sendMessage(KAFKA_TOPIC.ORDER_CREATED, msg);
-  }
-
-  async createOrderFailed(msg: IOrderMessage) {
-    return await this.sendMessage(KAFKA_TOPIC.ORDER_CREATION_FAILED, msg);
+  async verifyCartFailed(msg: IOrderMessage) {
+    return await this.sendMessage(KAFKA_TOPIC.ORDRE_FAILED, msg);
   }
 }
