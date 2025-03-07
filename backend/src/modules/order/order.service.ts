@@ -51,12 +51,8 @@ export class OrderService implements IOrderService, OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    const {
-      createOrder,
-      confirmOrder,
-      updateOrderFailed,
-      orderCreationFailed,
-    } = KafkaConsumerConfig.order;
+    const { createOrder, confirmOrder, updateOrderFailed, orderDLQ } =
+      KafkaConsumerConfig.order;
     await this.orderConsumer.init([
       {
         groupId: createOrder.groupId,
@@ -74,9 +70,9 @@ export class OrderService implements IOrderService, OnModuleInit {
         cb: this.handleUpdateOrderWhileProductDeductFailed.bind(this),
       },
       {
-        groupId: orderCreationFailed.groupId,
-        topic: orderCreationFailed.topic,
-        cb: this.handleOrderCreationFailed.bind(this),
+        groupId: orderDLQ.groupId,
+        topic: orderDLQ.topic,
+        cb: () => {},
       },
     ]);
   }
@@ -233,20 +229,97 @@ export class OrderService implements IOrderService, OnModuleInit {
   }
 
   async handleCreateOrder(message: IOrderMessage) {
-    console.log('handleCreateOrder msg', message);
-    await this.orderProducer.createdOrder(message);
-    // await this.orderProducer.createOrderFailed(message);
+    const { userId, orderId, productItems, shippingCost } = message;
+
+    try {
+      const productTotal = productItems.reduce(
+        (total, item) => total + item.quantity * item.price!,
+        0,
+      );
+      const totalPrice = productTotal + (shippingCost || 0);
+
+      const orderItems: OrderItemDto[] = productItems.map((item) => ({
+        id: v7(),
+        orderId,
+        productItemId: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        salePrice: item.salePrice,
+      }));
+
+      const newOrder: any = {
+        ...message,
+        id: orderId,
+        userId: userId,
+        paymentStatus: PaymentStatus.PENDING,
+        totalPrice,
+        trackingNumber: generateRandomString(10),
+        orderItems: orderItems as any,
+        status: OrderStatus.PENDING,
+        history: [
+          {
+            status: OrderStatus.PENDING,
+            createdAt: new Date(),
+          },
+        ],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      const createOrderResult = await this.orderRepo.insert(newOrder);
+      if (!createOrderResult) {
+        throw new CustomBadRequestException('Failed to create order');
+      }
+
+      await this.orderProducer.createdOrder(message);
+    } catch (error) {
+      console.error('[ERROR] ****** handleCreateOrder error', error);
+
+      await this.redisService.setOrder(orderId, {
+        userId,
+        orderId,
+        status: OrderStatus.REJECTED,
+        productItems: productItems,
+        message: error.message,
+      });
+
+      await this.orderProducer.createOrderFailed(message);
+    }
   }
 
   async handleConfirmOrder(message: IOrderMessage) {
-    console.log('handleConfirmOrder msg', message);
+    const { orderId } = message;
+
+    const updateResult = await this.orderRepo.update(orderId, {
+      status: OrderStatus.CONFIRMED,
+    } as any);
+
+    if (!updateResult) {
+      console.error(
+        `[ERROR] ******* Failed to update order(${orderId}) status to ${OrderStatus.CONFIRMED}`,
+      );
+      await this.orderProducer.sendDLQMessage({
+        ...message,
+        message: `Failed to update order(${orderId}) status to ${OrderStatus.CONFIRMED}`,
+      });
+    }
   }
 
   async handleUpdateOrderWhileProductDeductFailed(message: IOrderMessage) {
-    console.log('handleUpdateOrderWhileProductDeductFailed msg', message);
-  }
+    const { orderId } = message;
 
-  async handleOrderCreationFailed(message: IOrderMessage) {
-    console.log('handleOrderCreationFailed msg', message);
+    const updateResult = await this.orderRepo.update(orderId, {
+      status: OrderStatus.CANCELED,
+    } as any);
+
+    if (!updateResult) {
+      console.error(
+        `[ERROR] ******* Failed to update order(${orderId}) status to ${OrderStatus.CANCELED}`,
+      );
+      await this.orderProducer.sendDLQMessage({
+        ...message,
+        message: `Failed to update order(${orderId}) status to ${OrderStatus.CANCELED}`,
+      });
+    }
   }
 }

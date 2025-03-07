@@ -20,6 +20,7 @@ export interface ICartItemRepository
   extends IRepository<CartItem, UpdateCartItemDto, CondCartItemDto> {
   deleteByCartId(cartId: string): Promise<boolean>;
   deleteCartItemByIds(ids: string[]): Promise<boolean>;
+  deleteCartItemByCond(cond: any): Promise<boolean>;
 }
 
 export interface ICartProductRpc {

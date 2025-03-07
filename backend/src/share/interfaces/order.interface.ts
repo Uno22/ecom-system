@@ -11,4 +11,5 @@ export interface IOrderMessage {
 export interface IProductItemMessage {
   id: string;
   quantity: number;
+  [key: string]: any;
 }

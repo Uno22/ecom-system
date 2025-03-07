@@ -58,4 +58,5 @@ export enum OrderStatus {
   CANCELED = 'canceled',
   REFUNDED = 'refunded',
   DELETED = 'deleted',
+  REJECTED = 'rejected', // order has not created yet
 }

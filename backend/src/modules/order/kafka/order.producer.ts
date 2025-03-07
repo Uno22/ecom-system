@@ -33,4 +33,8 @@ export class OrderProducer {
   async createOrderFailed(msg: IOrderMessage) {
     return await this.sendMessage(KAFKA_TOPIC.ORDER_CREATION_FAILED, msg);
   }
+
+  async sendDLQMessage(msg: IOrderMessage) {
+    return await this.sendMessage(KAFKA_TOPIC.ORDER_DLQ, msg);
+  }
 }

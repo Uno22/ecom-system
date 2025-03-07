@@ -17,6 +17,7 @@ export enum KAFKA_TOPIC {
   ORDER_PRODUCT_DEDUCTED = 'order-product-deducted',
   ORDER_PRODUCT_DEDUCT_FAILED = 'order-product-deduct-failed',
   ORDRE_FAILED = 'order-failed',
+  ORDER_DLQ = 'order-dlq',
 }
 
 export const KafkaConsumerConfig = {
@@ -25,11 +26,15 @@ export const KafkaConsumerConfig = {
       groupId: 'verify-cart-group',
       topic: KAFKA_TOPIC.ORDER_STARTED,
     },
+    removeCartItems: {
+      groupId: 'remove-cart-items',
+      topic: KAFKA_TOPIC.ORDER_CREATED,
+    },
   },
   order: {
     createOrder: {
       groupId: 'create-order-group',
-      topic: KAFKA_TOPIC.ORDER_CART_VERIFIED,
+      topic: KAFKA_TOPIC.ORDER_PRODUCT_RESERVED,
     },
     confirmOrder: {
       groupId: 'confirm-order-group',
@@ -39,9 +44,9 @@ export const KafkaConsumerConfig = {
       groupId: 'update-order-failed-group',
       topic: KAFKA_TOPIC.ORDER_PRODUCT_DEDUCT_FAILED,
     },
-    orderCreationFailed: {
-      groupId: 'order-creation-failed-group',
-      topic: KAFKA_TOPIC.ORDRE_FAILED,
+    orderDLQ: {
+      groupId: 'order-dlq-group',
+      topic: KAFKA_TOPIC.ORDER_DLQ,
     },
   },
   product: {

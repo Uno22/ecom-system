@@ -35,7 +35,11 @@ export class ProductProducer {
     return await this.sendMessage(KAFKA_TOPIC.ORDER_PRODUCT_DEDUCTED, msg);
   }
 
-  async deducteProductFailed(msg: IOrderMessage) {
+  async deductProductFailed(msg: IOrderMessage) {
     return await this.sendMessage(KAFKA_TOPIC.ORDER_PRODUCT_DEDUCT_FAILED, msg);
+  }
+
+  async sendDLQMessage(msg: IOrderMessage) {
+    return await this.sendMessage(KAFKA_TOPIC.ORDER_DLQ, msg);
   }
 }
