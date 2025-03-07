@@ -1,6 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import {
+  CART_CONSUMER,
   CART_ITEM_REPOSITORY,
+  CART_PRODUCER,
   CART_PRODUCT_RPC,
   CART_REPOSITORY,
 } from './cart.di-token';
@@ -17,27 +19,55 @@ import {
   RemoveCartItemDto,
   UpdateCartItemDto,
 } from './dto';
-import { ModelStatus } from 'src/share/constants/enum';
+import { ModelStatus, OrderStatus } from 'src/share/constants/enum';
 import { Cart } from './model/cart.model';
-import { CreationAttributes } from 'sequelize';
+import { CreationAttributes, Op } from 'sequelize';
 import { v7 } from 'uuid';
 import {
   CartCreationFailedException,
+  CustomBadRequestException,
   DataNotFoundException,
   ProductInsufficientQuantityException,
 } from 'src/share/exceptions';
 import { CartItem } from './model/cart-item.model';
 import { CartProductDto } from './dto/cart-product.dto';
+import { CartProducer } from './kafka/cart.producer';
+import { CartConsumer } from './kafka/cart.consumer';
+import { IOrderMessage } from 'src/share/interfaces';
+import { KafkaConsumerConfig } from 'src/share/kafka/kafka.constants';
+import { RedisService } from 'src/share/cache/redis.service';
+import { REDIS_SERVER } from 'src/share/constants/di-token';
 
 @Injectable()
-export class CartService implements ICartService {
+export class CartService implements ICartService, OnModuleInit {
   constructor(
     @Inject(CART_REPOSITORY) private readonly cartRepo: ICartRepository,
     @Inject(CART_ITEM_REPOSITORY)
     private readonly cartItemRepo: ICartItemRepository,
     @Inject(CART_PRODUCT_RPC)
     private readonly cartProductRepo: ICartProductRpc,
+    @Inject(CART_PRODUCER)
+    private readonly cartProducer: CartProducer,
+    @Inject(CART_CONSUMER)
+    private readonly cartConsumer: CartConsumer,
+    @Inject(REDIS_SERVER) private readonly redisService: RedisService,
   ) {}
+
+  async onModuleInit() {
+    const { verifyCart, removeCartItems } = KafkaConsumerConfig.cart;
+    await this.cartConsumer.init([
+      {
+        groupId: verifyCart.groupId,
+        topic: verifyCart.topic,
+        cb: this.handleVerifyCart.bind(this),
+      },
+      {
+        groupId: removeCartItems.groupId,
+        topic: removeCartItems.topic,
+        cb: this.handleRemoveCartItems.bind(this),
+      },
+    ]);
+  }
 
   async getActiveCart(userId: string): Promise<CartDto | null> {
     const activeCart = await this.cartRepo.findByCond(
@@ -246,5 +276,88 @@ export class CartService implements ICartService {
     deleteCartItemDto: DeleteCartItemDto,
   ): Promise<boolean> {
     return this.cartItemRepo.deleteCartItemByIds(deleteCartItemDto.ids);
+  }
+
+  async handleVerifyCart(message: IOrderMessage) {
+    const { userId, orderId, productItems } = message;
+
+    try {
+      const activeCart = await this.cartRepo.findByCond(
+        {
+          userId,
+          status: ModelStatus.ACTIVE,
+        },
+        {
+          raw: false,
+          include: [
+            {
+              model: CartItem,
+            },
+          ],
+        },
+      );
+
+      if (!activeCart) {
+        throw new DataNotFoundException('Cart not found');
+      }
+
+      const cartItems = activeCart.cartItems || [];
+      for (const productItem of productItems) {
+        const findCartItem = cartItems.find(
+          (cartItem) => cartItem.productItemId === productItem.id,
+        );
+
+        if (!findCartItem) {
+          throw new CustomBadRequestException(
+            `Product(${productItem.id}) not found in cart`,
+          );
+        }
+
+        if (findCartItem.quantity !== productItem.quantity) {
+          throw new CustomBadRequestException(
+            `The quantity of product(${productItem.id}) mismatch between payload(${productItem.quantity}) and cart(${findCartItem.quantity})`,
+          );
+        }
+      }
+
+      await this.cartProducer.verifiedCart(message);
+    } catch (error) {
+      console.error('[ERROR] ****** handleVerifyCart error', error);
+
+      await this.redisService.setOrder(orderId, {
+        userId,
+        orderId,
+        status: OrderStatus.REJECTED,
+        productItems: productItems,
+        message: error.message,
+      });
+
+      // await this.cartProducer.verifyCartFailed({
+      //   ...message,
+      //   status: OrderStatus.REJECTED,
+      //   message: error.message,
+      // });
+    }
+  }
+
+  async handleRemoveCartItems(message: IOrderMessage) {
+    const { userId, productItems } = message;
+
+    const activeCart = await this.cartRepo.findByCond({
+      userId,
+      status: ModelStatus.ACTIVE,
+    });
+
+    if (!activeCart) {
+      console.error('Cart not found');
+      return false;
+    }
+
+    const ids = productItems.map(({ id }) => id);
+    const cond = {
+      cartId: activeCart.id,
+      productItemId: { [Op.in]: ids },
+    };
+    return this.cartItemRepo.deleteCartItemByCond(cond);
   }
 }

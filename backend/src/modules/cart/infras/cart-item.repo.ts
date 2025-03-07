@@ -26,4 +26,11 @@ export class CartItemRepository
     } as any);
     return deletedRow > 0;
   }
+
+  async deleteCartItemByCond(cond: any): Promise<boolean> {
+    const deletedRow = await this.model.destroy({
+      where: cond,
+    } as any);
+    return deletedRow > 0;
+  }
 }

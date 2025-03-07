@@ -12,7 +12,6 @@ import { BaseRepository } from 'src/share/infras/base.repo';
 import {
   UpdateProductItemDto,
   CondProductItemDto,
-  FinalizeOrderDto,
   ProductItemAttributeDto,
   ReserveProductItem,
 } from '../dto';
@@ -21,6 +20,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { ProductItemVariant } from 'src/modules/product-item-variant/product-item-variant.model';
 import { v7 } from 'uuid';
 import { ModelStatus } from 'src/share/constants/enum';
+import { raw } from 'mysql2';
 
 @Injectable()
 export class ProductItemRepository
@@ -94,5 +94,63 @@ export class ProductItemRepository
         ),
       ),
     );
+  }
+
+  async releaseProductItems(
+    productItems: ReserveProductItem[],
+    transaction: Transaction,
+  ) {
+    return Promise.all(
+      productItems.map((item: ReserveProductItem) =>
+        this.productItemModel.update(
+          {
+            reservedQuantity: this.sequelize.literal(
+              `GREATEST(0, reserved_quantity - ${item.reserveQuantity})`,
+            ),
+          },
+          {
+            where: {
+              id: item.productItemId,
+              reservedQuantity: { [Op.gt]: 0 },
+            },
+            transaction,
+          },
+        ),
+      ),
+    );
+  }
+  async deductProductItems(
+    productItems: ReserveProductItem[],
+    transaction: Transaction,
+  ) {
+    return Promise.all(
+      productItems.map((item: ReserveProductItem) =>
+        this.productItemModel.update(
+          {
+            quantity: this.sequelize.literal(
+              `GREATEST(0, quantity - ${item.reserveQuantity})`,
+            ),
+            reservedQuantity: this.sequelize.literal(
+              `GREATEST(0, reserved_quantity - ${item.reserveQuantity})`,
+            ),
+          },
+          {
+            where: {
+              id: item.productItemId,
+              quantity: { [Op.gt]: 0 },
+              reservedQuantity: { [Op.gt]: 0 },
+            },
+            transaction,
+          },
+        ),
+      ),
+    );
+  }
+
+  async findByIds(ids: string[]): Promise<Array<ProductItem>> {
+    return this.productItemModel.findAll({
+      where: { id: { [Op.in]: ids } },
+      raw: true,
+    });
   }
 }

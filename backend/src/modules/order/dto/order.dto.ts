@@ -131,7 +131,7 @@ export class OrderDto {
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0.0)
   @IsNotEmpty()
-  price: number;
+  totalPrice: number;
 
   @ApiPropertyOptional({
     example: 'aiwi10101918930',

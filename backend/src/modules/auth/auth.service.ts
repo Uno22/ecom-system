@@ -13,7 +13,7 @@ import {
   UserUnauthorizedException,
 } from 'src/share/exceptions';
 import { UserInactivatedException } from 'src/share/exceptions/user-inactivated.exception';
-import { UserInactivatedStatus, UserRole } from 'src/share/constants/enum';
+import { UserInactivatedStatus } from 'src/share/constants/enum';
 import { TokenPayload } from 'src/share/interfaces';
 import * as bcrypt from 'bcryptjs';
 import { JWT_SERVICE, REDIS_SERVER } from 'src/share/constants/di-token';
@@ -142,7 +142,7 @@ export class AuthService implements IAuthService {
 
     // double check user's status and role
     const user = await this.userService.findOne(userId);
-    console.log('decodedToken', decodedToken, user);
+
     if (
       !user ||
       user.role !== decodedToken.role ||

@@ -56,8 +56,11 @@ export class OrderRepository implements IOrderRepository {
     } as Order;
   }
 
-  update(id: string, data: UpdateOrderDto): Promise<boolean> {
-    throw new Error('Method not implemented.');
+  async update(id: string, data: UpdateOrderDto): Promise<boolean> {
+    const [affectedRows] = await this.orderModel.update(data, {
+      where: { id },
+    } as any);
+    return affectedRows > 0;
   }
 
   async delete(id: string, isHardDelete: boolean): Promise<boolean> {

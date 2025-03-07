@@ -49,6 +49,11 @@ jobs:
           echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
           echo "REDIS_TOKEN_EXPIRES_IN=${{ secrets.REDIS_TOKEN_EXPIRES_IN }}" >> .env
           echo "REDIS_USE_INFO_EXPIRES_IN=${{ secrets.REDIS_USE_INFO_EXPIRES_IN }}" >> .env
+          echo "REDIS_ORDER_EXPIRES_IN=${{ secrets.REDIS_ORDER_EXPIRES_IN }}" >> .env
+          echo "KAFKA_ENABLED=${{ secrets.KAFKA_ENABLED }}" >> .env
+          echo "KAFKA_BROKER=${{ secrets.KAFKA_BROKER }}" >> .env
+          echo "KAFKA_USERNAME=${{ secrets.KAFKA_USERNAME }}" >> .env
+          echo "KAFKA_PASSWORD=${{ secrets.KAFKA_PASSWORD }}" >> .env
           echo "copying $GITHUB_WORKSPACE/.env to EC2"
           scp -o StrictHostKeyChecking=no -i private_key.pem $GITHUB_WORKSPACE/.env ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/ecom-system/backend/
           echo "completed copy"

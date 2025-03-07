@@ -30,4 +30,13 @@ export interface IProductItemRepository
     productItems: ReserveProductItem[],
     transaction: Transaction,
   );
+  releaseProductItems(
+    productItems: ReserveProductItem[],
+    transaction: Transaction,
+  );
+  deductProductItems(
+    productItems: ReserveProductItem[],
+    transaction: Transaction,
+  );
+  findByIds(ids: string[]): Promise<Array<ProductItem>>;
 }
