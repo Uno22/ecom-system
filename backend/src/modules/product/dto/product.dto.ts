@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  MaxLength,
   ValidateNested,
 } from 'class-validator';
 import { ModelStatus } from 'src/share/constants/enum';
@@ -34,6 +35,7 @@ export class ProductDto {
     description: 'The name of product',
   })
   @IsString()
+  @MaxLength(100)
   @IsNotEmpty()
   name: string;
 
@@ -42,6 +44,7 @@ export class ProductDto {
     description: 'The description of product',
   })
   @IsString()
+  @MaxLength(200)
   @IsOptional()
   description?: string;
 

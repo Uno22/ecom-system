@@ -8,6 +8,7 @@ import {
   IsString,
   IsUUID,
   Max,
+  MaxLength,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -113,6 +114,7 @@ export class ProductItemDto {
     description: 'The name of product',
   })
   @IsString()
+  @MaxLength(100)
   @IsNotEmpty()
   name: string;
 
@@ -159,6 +161,7 @@ export class ProductItemDto {
     description: 'The sku of product item',
   })
   @IsString()
+  @MaxLength(100)
   @IsOptional()
   sku?: string;
 
@@ -167,6 +170,7 @@ export class ProductItemDto {
     description: 'The content of product item',
   })
   @IsString()
+  @MaxLength(100)
   @IsOptional()
   content?: string;
 
@@ -175,6 +179,7 @@ export class ProductItemDto {
     description: 'The description of product item',
   })
   @IsString()
+  @MaxLength(200)
   @IsOptional()
   description?: string;
 

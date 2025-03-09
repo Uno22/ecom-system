@@ -20,13 +20,13 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Basic E-Commerce API')
     .setDescription(
-      `This is a basic E-Commerce API with the main functionality:
+      `This is a basic E-Commerce API with the following functionality:
 
 - Register new user.
 
 - User login, logout, refresh token.
 - Add products to cart.
-- Place order.
+- Place order - this is main feature, you can place an order after adding products to cart
 - CRUD brand/category/product.
 
 Notes:

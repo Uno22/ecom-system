@@ -11,6 +11,7 @@ import {
   IsString,
   IsUUID,
   Max,
+  MaxLength,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -59,6 +60,7 @@ export class OrderDto {
     description: 'The shipping address',
   })
   @IsString()
+  @MaxLength(100)
   @IsNotEmpty()
   shippingAddress: string;
 
@@ -67,6 +69,7 @@ export class OrderDto {
     description: 'The shipping city',
   })
   @IsString()
+  @MaxLength(50)
   @IsNotEmpty()
   shippingCity: string;
 
@@ -75,6 +78,7 @@ export class OrderDto {
     description: 'The first name of recipient',
   })
   @IsString()
+  @MaxLength(50)
   @IsNotEmpty()
   recipientFirstName: string;
 
@@ -83,6 +87,7 @@ export class OrderDto {
     description: 'The last name of recipient',
   })
   @IsString()
+  @MaxLength(50)
   @IsNotEmpty()
   recipientLastName: string;
 
@@ -91,6 +96,7 @@ export class OrderDto {
     description: 'The phone number of recipient',
   })
   @IsPhoneNumber('VN')
+  @MaxLength(20)
   @IsNotEmpty()
   recipientPhone: string;
 
@@ -99,6 +105,7 @@ export class OrderDto {
     description: 'The email of recipient',
   })
   @IsEmail()
+  @MaxLength(50)
   @IsNotEmpty()
   recipientEmail: string;
 

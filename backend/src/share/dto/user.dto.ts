@@ -8,6 +8,7 @@ import {
   IsString,
   IsStrongPassword,
   IsUUID,
+  MaxLength,
   MinLength,
 } from 'class-validator';
 import { UserGender, UserRole, UserStatus } from 'src/share/constants/enum';
@@ -22,16 +23,19 @@ export class UserDto {
 
   @ApiProperty({ example: 'first', description: 'The first name of user' })
   @IsString()
+  @MaxLength(50)
   @IsNotEmpty()
   firstName: string;
 
   @ApiProperty({ example: 'last', description: 'The last name of user' })
   @IsString()
+  @MaxLength(50)
   @IsNotEmpty()
   lastName: string;
 
   @ApiProperty({ example: 'user@gamil.com', description: 'The email of user' })
   @IsEmail()
+  @MaxLength(50)
   @IsNotEmpty()
   email: string;
 
@@ -46,6 +50,7 @@ export class UserDto {
     },
     { message: 'Password is too weak' },
   )
+  @MaxLength(20)
   @IsNotEmpty()
   password: string;
 
@@ -53,10 +58,12 @@ export class UserDto {
   @IsString()
   @IsOptional()
   @MinLength(8)
+  @MaxLength(20)
   phone?: string;
 
   @ApiProperty({ example: 'address', description: 'The address of user' })
   @IsString()
+  @MaxLength(200)
   @IsOptional()
   address?: string;
 
@@ -73,6 +80,7 @@ export class UserDto {
     description: 'The avatar url of user',
   })
   @IsString()
+  @MaxLength(150)
   @IsOptional()
   avatar?: string;
 

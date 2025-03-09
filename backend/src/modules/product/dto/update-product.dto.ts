@@ -1,6 +1,6 @@
 import { ApiPropertyOptional, PickType } from '@nestjs/swagger';
 import { ProductDto } from './product.dto';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class UpdateProductDto extends PickType(ProductDto, [
   'description',
@@ -10,6 +10,7 @@ export class UpdateProductDto extends PickType(ProductDto, [
     description: 'The name of product',
   })
   @IsString()
+  @MaxLength(100)
   @IsOptional()
   name?: string;
 }
