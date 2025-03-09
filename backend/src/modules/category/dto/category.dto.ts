@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  MaxLength,
 } from 'class-validator';
 import { ModelStatus } from 'src/share/constants/enum';
 
@@ -19,6 +20,7 @@ export class CategoryDto {
 
   @ApiProperty({ example: 'Table', description: 'The name of category' })
   @IsString()
+  @MaxLength(50)
   @IsNotEmpty()
   name: string;
 
@@ -27,6 +29,7 @@ export class CategoryDto {
     description: 'The url of image',
   })
   @IsString()
+  @MaxLength(200)
   @IsOptional()
   image?: string;
 
@@ -43,6 +46,7 @@ export class CategoryDto {
     description: 'The description of category',
   })
   @IsString()
+  @MaxLength(50)
   @IsOptional()
   description?: string;
 

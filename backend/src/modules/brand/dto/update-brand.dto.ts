@@ -1,9 +1,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, MaxLength } from 'class-validator';
 
 export class UpdateBrandDto {
   @ApiPropertyOptional({ example: 'Nokia', description: 'The name of brand' })
   @IsString()
+  @MaxLength(100)
   @IsOptional()
   name?: string;
 
@@ -12,6 +13,7 @@ export class UpdateBrandDto {
     description: 'The url of image',
   })
   @IsString()
+  @MaxLength(200)
   @IsOptional()
   image?: string;
 
@@ -20,6 +22,7 @@ export class UpdateBrandDto {
     description: 'The description of brand',
   })
   @IsString()
+  @MaxLength(200)
   @IsOptional()
   description?: string;
 
@@ -28,6 +31,7 @@ export class UpdateBrandDto {
     description: 'The tag line of brand',
   })
   @IsString()
+  @MaxLength(150)
   @IsOptional()
   tagLine?: string;
 }

@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+  MaxLength,
+} from 'class-validator';
 import { ModelStatus } from 'src/share/constants/enum';
 
 export class VariantDto {
@@ -12,6 +18,7 @@ export class VariantDto {
 
   @ApiProperty({ example: 'color', description: 'The name of variant' })
   @IsString()
+  @MaxLength(36)
   @IsNotEmpty()
   name: string;
 
@@ -41,6 +48,7 @@ export class VariantItemDto {
     description: 'The value of variant item',
   })
   @IsString()
+  @MaxLength(100)
   @IsNotEmpty()
   value: string;
 
