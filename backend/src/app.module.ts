@@ -27,7 +27,7 @@ import { APP_GUARD } from '@nestjs/core';
     ThrottlerModule.forRoot([
       {
         ttl: 30000,
-        limit: 10,
+        limit: 30,
       },
     ]),
     SequelizeModule.forRootAsync({
