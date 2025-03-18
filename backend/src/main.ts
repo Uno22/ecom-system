@@ -16,6 +16,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new ResponseInterceptor());
+  app.enableCors();
 
   const config = new DocumentBuilder()
     .setTitle('Basic E-Commerce API')
