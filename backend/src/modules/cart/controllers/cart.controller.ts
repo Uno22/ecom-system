@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Inject,
+  Param,
   Post,
   Req,
   UseGuards,
@@ -20,6 +21,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -64,11 +66,12 @@ export class CartController {
     return this.cartService.addProductToCart(payload);
   }
 
-  @Post('update-product-quantity')
+  @Post(':cartItemId')
   @ApiOperation({
     summary: 'Update quantity of product in cart',
   })
   @ApiBody({ type: UpdateCartItemDto })
+  @ApiParam({ name: 'cartItemId', required: true })
   @ApiResponse({
     status: 200,
     description: 'The product quantity updated successful',
@@ -77,28 +80,26 @@ export class CartController {
   updateProductQuantityInCart(
     @Body() updateCartItemDto: UpdateCartItemDto,
     @Req() req,
+    @Param('cartItemId') cartItemId: string,
   ) {
     const { sub: userId } = req.user;
     updateCartItemDto.userId = userId;
+    updateCartItemDto.cartItemId = cartItemId;
     return this.cartService.updateProductQuantityInCart(updateCartItemDto);
   }
 
-  @Delete('remove-product')
+  @Delete(':cartItemId')
   @ApiOperation({
     summary: 'Remove product from cart',
   })
-  @ApiBody({ type: RemoveCartItemDto })
+  @ApiParam({ name: 'cartItemId', required: true })
   @ApiResponse({
     status: 200,
     description: 'The product was removed successful',
     type: Boolean,
   })
-  removeProductFromCart(
-    @Body() removeCartItemDto: RemoveCartItemDto,
-    @Req() req,
-  ) {
+  removeProductFromCart(@Param('cartItemId') cartItemId: string, @Req() req) {
     const { sub: userId } = req.user;
-    removeCartItemDto.userId = userId;
-    return this.cartService.removeProductFromCart(removeCartItemDto);
+    return this.cartService.removeProductFromCart({ userId, cartItemId });
   }
 }
