@@ -191,7 +191,7 @@ export class CartService implements ICartService, OnModuleInit {
   async updateProductQuantityInCart(
     updateCartItemDto: UpdateCartItemDto,
   ): Promise<boolean> {
-    const { userId, productItemId, quantity } = updateCartItemDto;
+    const { userId, cartItemId, productItemId, quantity } = updateCartItemDto;
 
     // find active cart for authenciated user
     const activeCart = await this.cartRepo.findByCond({
@@ -202,10 +202,7 @@ export class CartService implements ICartService, OnModuleInit {
       throw new DataNotFoundException('Cart not found');
     }
 
-    const cartItem = await this.cartItemRepo.findByCond({
-      cartId: activeCart.id,
-      productItemId,
-    });
+    const cartItem = await this.cartItemRepo.get(cartItemId!);
 
     if (!cartItem) {
       throw new DataNotFoundException('Product not found in cart');
@@ -238,7 +235,7 @@ export class CartService implements ICartService, OnModuleInit {
   async removeProductFromCart(
     removeCartItemDto: RemoveCartItemDto,
   ): Promise<boolean> {
-    const { userId, productItemId } = removeCartItemDto;
+    const { userId, cartItemId } = removeCartItemDto;
 
     const activeCart = await this.cartRepo.findByCond({
       userId,
@@ -249,10 +246,7 @@ export class CartService implements ICartService, OnModuleInit {
       throw new DataNotFoundException('Cart not found');
     }
 
-    const cartItem = await this.cartItemRepo.findByCond({
-      cartId: activeCart.id,
-      productItemId,
-    });
+    const cartItem = await this.cartItemRepo.get(cartItemId!);
 
     if (!cartItem) {
       throw new DataNotFoundException('Product not found in cart');

@@ -8,9 +8,9 @@ export class RemoveCartItemDto {
 
   @ApiProperty({
     example: '019305be-db14-7776-8bbc-dfd4cfb0f5ed',
-    description: 'The id of product item',
+    description: 'The id of cart item',
   })
   @IsUUID()
   @IsNotEmpty()
-  productItemId?: string;
+  cartItemId?: string;
 }

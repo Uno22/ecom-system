@@ -8,6 +8,10 @@ export class UpdateCartItemDto {
   @IsOptional()
   userId?: string;
 
+  @IsUUID()
+  @IsOptional()
+  cartItemId?: string;
+
   @ApiProperty({
     example: '019305be-db14-7776-8bbc-dfd4cfb0f5ed',
     description: 'The id of product item',
