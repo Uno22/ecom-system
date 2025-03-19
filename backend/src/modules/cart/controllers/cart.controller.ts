@@ -5,17 +5,13 @@ import {
   Get,
   Inject,
   Param,
+  Patch,
   Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { CART_SERVICE } from '../cart.di-token';
-import {
-  AddCartItemDto,
-  CartDto,
-  RemoveCartItemDto,
-  UpdateCartItemDto,
-} from '../dto';
+import { AddCartItemDto, CartDto, UpdateCartItemDto } from '../dto';
 import { RemoteAuthGuard } from 'src/share/guards';
 import {
   ApiBearerAuth,
@@ -66,7 +62,7 @@ export class CartController {
     return this.cartService.addProductToCart(payload);
   }
 
-  @Post(':cartItemId')
+  @Patch(':cartItemId')
   @ApiOperation({
     summary: 'Update quantity of product in cart',
   })
