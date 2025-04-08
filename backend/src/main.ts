@@ -28,7 +28,7 @@ async function bootstrap() {
 - User login, logout, refresh token.
 - Add products to cart.
 - Place order - this is main feature, you can place an order after adding products to cart
-- CRUD brand/category/product.
+- CRUD brand/category/product..
 
 Notes:
 - Remember to add token to secure api.
